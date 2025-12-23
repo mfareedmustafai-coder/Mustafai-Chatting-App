@@ -14,13 +14,17 @@
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f1f5f9; overflow: hidden; }
         .glass-ui { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
         .nav-active { color: #6366f1; border-bottom: 3px solid #6366f1; }
-        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; }
-        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; position: relative; }
+        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
         .calling-pulse { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
         video, img { max-width: 100%; border-radius: 12px; margin-top: 5px; }
         .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
         .call-video-self { width: 100px; height: 140px; position: absolute; top: 20px; right: 20px; border: 2px solid white; z-index: 50; }
+        
+        /* Media Options Menu */
+        .media-menu { position: absolute; bottom: -30px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 4px; display: none; z-index: 20; }
+        .show-menu { display: block; }
     </style>
 </head>
 <body>
@@ -32,8 +36,6 @@
                 <h1 class="text-4xl font-black text-indigo-500 italic">MUSTAFAI</h1>
                 <p class="text-slate-400 text-sm mt-2">The Professional Standard for Chat</p>
             </div>
-
-            <!-- Login -->
             <div id="login-form" class="space-y-4">
                 <input type="email" id="l-email" placeholder="Email Address" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 text-white">
                 <input type="password" id="l-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 text-white">
@@ -43,8 +45,6 @@
                 </button>
                 <p class="text-center text-slate-400 text-sm">Need an account? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold">Sign Up</button></p>
             </div>
-
-            <!-- Signup -->
             <div id="signup-form" class="hidden space-y-4">
                 <input type="text" id="s-name" placeholder="Full Name" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 text-white">
                 <input type="text" id="s-username" placeholder="Username (Unique)" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 text-white">
@@ -58,8 +58,6 @@
 
     <!-- --- APP INTERFACE --- -->
     <div id="app-screen" class="hidden h-screen max-w-md mx-auto flex flex-col relative bg-slate-900 shadow-2xl border-x border-white/5">
-        
-        <!-- Header -->
         <header class="p-6 flex justify-between items-center bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
             <div>
                 <h2 id="view-title" class="text-2xl font-bold">Inbox</h2>
@@ -74,23 +72,17 @@
         </header>
 
         <main class="flex-1 overflow-y-auto px-6 pb-28">
-            <!-- Home -->
             <div id="view-home" class="tab-view space-y-4">
                 <div id="chats-container" class="space-y-2"></div>
             </div>
-
-            <!-- Requests -->
             <div id="view-requests" class="tab-view hidden space-y-4">
                 <h3 class="text-slate-500 text-xs font-bold uppercase tracking-widest">Incoming Requests</h3>
                 <div id="requests-container" class="space-y-3"></div>
             </div>
-
-            <!-- Profile -->
             <div id="view-profile" class="tab-view hidden py-8 text-center">
                 <div class="relative inline-block mb-6">
                     <div class="w-28 h-28 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-4xl font-bold shadow-2xl rotate-3" id="p-avatar">U</div>
                 </div>
-                
                 <div id="p-info-display">
                     <h2 id="p-name" class="text-2xl font-bold">User Name</h2>
                     <p id="p-username" class="text-indigo-400 font-medium mb-8">@username</p>
@@ -98,8 +90,6 @@
                         <i data-lucide="edit-3" class="w-5 h-5"></i> Edit Profile
                     </button>
                 </div>
-
-                <!-- Edit Profile UI -->
                 <div id="p-info-edit" class="hidden space-y-4 bg-slate-800 p-6 rounded-3xl border border-slate-700">
                     <h3 class="text-sm font-bold text-slate-400 uppercase">Change Display Name</h3>
                     <input type="text" id="edit-name-val" class="w-full p-4 bg-slate-700 rounded-2xl outline-none focus:ring-1 focus:ring-indigo-500">
@@ -108,12 +98,10 @@
                         <button onclick="toggleEditProfile(false)" class="flex-1 bg-slate-600 py-3 rounded-xl font-bold">Cancel</button>
                     </div>
                 </div>
-
                 <button onclick="logout()" class="w-full p-4 bg-red-500/10 text-red-500 font-bold rounded-2xl border border-red-500/20 mt-4">Sign Out</button>
             </div>
         </main>
 
-        <!-- Navigation -->
         <nav class="absolute bottom-0 left-0 right-0 p-6 bg-slate-900/90 backdrop-blur-xl border-t border-white/5 flex justify-around items-center z-50">
             <button onclick="switchTab('home')" id="nav-home" class="nav-active flex flex-col items-center gap-1"><i data-lucide="message-square"></i></button>
             <button onclick="switchTab('requests')" id="nav-requests" class="text-slate-500 flex flex-col items-center gap-1"><i data-lucide="bell"></i></button>
@@ -137,7 +125,7 @@
                 <button onclick="initCall('video')" class="text-slate-400"><i data-lucide="video"></i></button>
             </div>
         </header>
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-900/50"></div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-8 bg-slate-900/50"></div>
         <div class="p-4 bg-slate-800 flex items-center gap-3">
             <label class="cursor-pointer text-slate-400 hover:text-white p-2">
                 <i data-lucide="paperclip"></i>
@@ -148,15 +136,13 @@
         </div>
     </div>
 
-    <!-- --- REAL CALL OVERLAY --- -->
+    <!-- --- CALL OVERLAY --- -->
     <div id="call-overlay" class="fixed inset-0 z-[200] bg-slate-950 hidden flex flex-col items-center justify-center text-center p-6">
         <div id="call-ui-ringing">
             <div class="w-32 h-32 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-4xl font-bold mx-auto mb-8 shadow-2xl calling-pulse relative">
                 <span id="call-avatar">?</span>
             </div>
             <h2 id="call-target-name" class="text-3xl font-bold mb-2">Connecting...</h2>
-            <p id="call-status" class="text-indigo-400 animate-pulse">Secure Connection</p>
-            
             <div id="call-actions-incoming" class="flex gap-10 mt-20 hidden">
                 <button onclick="rejectCall()" class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center"><i data-lucide="phone-off"></i></button>
                 <button onclick="acceptCall()" class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center"><i data-lucide="phone"></i></button>
@@ -165,7 +151,6 @@
                 <button onclick="endCall()" class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto"><i data-lucide="phone-off"></i></button>
             </div>
         </div>
-
         <div id="call-ui-active" class="absolute inset-0 hidden">
             <video id="remote-vid" class="call-video-full" autoplay playsinline></video>
             <video id="local-vid" class="call-video-self" autoplay playsinline muted></video>
@@ -215,7 +200,6 @@
         let activeCall = null;
         let myStream = null;
 
-        // --- AUTH ---
         window.toggleAuth = (show) => {
             document.getElementById('login-form').classList.toggle('hidden', show);
             document.getElementById('signup-form').classList.toggle('hidden', !show);
@@ -230,10 +214,8 @@
                     const user = document.getElementById('s-username').value.toLowerCase().trim();
                     const email = document.getElementById('s-email').value;
                     const pass = document.getElementById('s-password').value;
-                    
                     const userTaken = await get(ref(db, `usernames/${user}`));
                     if(userTaken.exists()) return alert("Username already taken!");
-
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     const profile = { uid: res.user.uid, name, username: user, email };
                     await set(ref(db, `users/${res.user.uid}`), profile);
@@ -252,7 +234,6 @@
 
         window.logout = () => signOut(auth);
 
-        // --- PROFILE EDIT ---
         window.toggleEditProfile = (edit) => {
             document.getElementById('p-info-display').classList.toggle('hidden', edit);
             document.getElementById('p-info-edit').classList.toggle('hidden', !edit);
@@ -267,10 +248,8 @@
             document.getElementById('p-name').innerText = newName;
             document.getElementById('p-avatar').innerText = newName[0];
             toggleEditProfile(false);
-            alert("Name updated!");
         };
 
-        // --- AUTH OBSERVER ---
         onAuthStateChanged(auth, async (user) => {
             if(user){
                 const snap = await get(ref(db, `users/${user.uid}`));
@@ -289,7 +268,6 @@
             lucide.createIcons();
         });
 
-        // --- CALLING (PEERJS) ---
         function initPeerSystem(uid) {
             myPeer = new Peer(uid);
             myPeer.on('call', async (call) => {
@@ -307,9 +285,6 @@
             document.getElementById('call-overlay').classList.remove('hidden');
             document.getElementById('call-target-name').innerText = selectedFriend.name;
             document.getElementById('call-avatar').innerText = selectedFriend.name[0];
-            document.getElementById('call-actions-incoming').classList.add('hidden');
-            document.getElementById('call-actions-outgoing').classList.remove('hidden');
-
             myStream = await navigator.mediaDevices.getUserMedia({ video: type === 'video', audio: true });
             activeCall = myPeer.call(selectedFriend.uid, myStream);
             setupCallStream(activeCall);
@@ -339,29 +314,20 @@
 
         window.rejectCall = () => { activeCall.close(); document.getElementById('call-overlay').classList.add('hidden'); };
 
-        // --- MEDIA PROCESSING (BASE64) ---
         window.processMedia = (file) => {
             if(!file) return;
-            if(file.size > 5242880) return alert("File too large (Max 5MB)"); // DB Limit safety
-
+            if(file.size > 5242880) return alert("File too large");
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const base64 = e.target.result;
                 const type = file.type.startsWith('image/') ? 'img' : 'vid';
                 const chatId = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid + selectedFriend.uid : selectedFriend.uid + auth.currentUser.uid;
-                await push(ref(db, `messages/${chatId}`), {
-                    sender: auth.currentUser.uid,
-                    type: type,
-                    data: base64,
-                    time: Date.now()
-                });
+                await push(ref(db, `messages/${chatId}`), { sender: auth.currentUser.uid, type: type, data: base64, time: Date.now() });
             };
             reader.readAsDataURL(file);
         };
 
-        // --- CHAT LOGIC ---
         function loadRealtimeData() {
-            // Requests
             onValue(ref(db, `requests/${auth.currentUser.uid}`), (snap) => {
                 const cont = document.getElementById('requests-container');
                 cont.innerHTML = "";
@@ -375,7 +341,6 @@
                 });
             });
 
-            // Friends
             onValue(ref(db, `friends/${auth.currentUser.uid}`), async (snap) => {
                 const cont = document.getElementById('chats-container');
                 cont.innerHTML = "";
@@ -383,7 +348,7 @@
                     const fs = await get(ref(db, `users/${fUID}`));
                     const f = fs.val();
                     const div = document.createElement('div');
-                    div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer hover:bg-slate-800 transition";
+                    div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer";
                     div.onclick = () => openChat(f);
                     div.innerHTML = `<div class="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold">${f.name[0]}</div>
                                     <div><p class="font-bold text-sm">${f.name}</p><p class="text-[10px] text-emerald-400 font-bold uppercase tracking-tighter">Active</p></div>`;
@@ -391,6 +356,19 @@
                 }
             });
         }
+
+        window.downloadMedia = (data, type) => {
+            const link = document.createElement("a");
+            link.href = data;
+            link.download = `mustafai_${Date.now()}.${type === 'img' ? 'jpg' : 'mp4'}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        window.toggleMediaMenu = (id) => {
+            document.getElementById(`menu-${id}`).classList.toggle('show-menu');
+        };
 
         window.openChat = (friend) => {
             selectedFriend = friend;
@@ -404,20 +382,34 @@
                 box.innerHTML = "";
                 snap.forEach(c => {
                     const m = c.val();
+                    const msgId = c.key;
                     const isMe = m.sender === auth.currentUser.uid;
                     const div = document.createElement('div');
                     div.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
                     
                     let content = `<p class="text-sm">${m.text}</p>`;
-                    if(m.type === 'img') content = `<img src="${m.data}">`;
-                    if(m.type === 'vid') content = `<video src="${m.data}" controls></video>`;
+                    if(m.type === 'img' || m.type === 'vid') {
+                        let mediaHtml = m.type === 'img' ? `<img src="${m.data}">` : `<video src="${m.data}" controls></video>`;
+                        content = `
+                            <div class="relative group">
+                                ${mediaHtml}
+                                <div class="flex justify-end mt-1">
+                                    <button onclick="toggleMediaMenu('${msgId}')" class="text-slate-400 p-1"><i data-lucide="more-horizontal"></i></button>
+                                </div>
+                                <div id="menu-${msgId}" class="media-menu">
+                                    <button onclick="downloadMedia('${m.data}', '${m.type}')" class="text-xs text-white px-3 py-1 flex items-center gap-2">
+                                        <i data-lucide="download" class="w-3 h-3"></i> Download
+                                    </button>
+                                </div>
+                            </div>`;
+                    }
                     
                     div.innerHTML = `<div class="p-3 max-w-[85%] ${isMe ? 'msg-sent' : 'msg-received'}">${content}</div>`;
                     box.appendChild(div);
                 });
                 box.scrollTop = box.scrollHeight;
+                lucide.createIcons();
             });
-            lucide.createIcons();
         };
 
         window.sendTextMsg = async () => {
@@ -434,35 +426,32 @@
             await remove(ref(db, `requests/${auth.currentUser.uid}/${uid}`));
         };
 
-        // --- SEARCH ---
-        window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
-        window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
-        let foundUID = null;
         window.findUser = async () => {
             const u = document.getElementById('search-username-input').value.toLowerCase().trim();
             const snap = await get(ref(db, `usernames/${u}`));
             if(snap.exists()){
-                foundUID = snap.val();
+                const fUID = snap.val();
                 document.getElementById('res-username-display').innerText = '@' + u;
                 document.getElementById('search-result-box').classList.remove('hidden');
+                window.lastFoundUID = fUID;
             } else alert("User not found");
         };
         window.sendFriendRequest = async () => {
-            await set(ref(db, `requests/${foundUID}/${auth.currentUser.uid}`), { uid: auth.currentUser.uid, name: myData.name, username: myData.username });
+            await set(ref(db, `requests/${window.lastFoundUID}/${auth.currentUser.uid}`), { uid: auth.currentUser.uid, name: myData.name, username: myData.username });
             alert("Request sent!");
-            closeSearch();
+            document.getElementById('search-modal').classList.add('hidden');
         };
 
-        // --- NAVIGATION ---
         window.switchTab = (t) => {
             document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
             document.getElementById('view-' + t).classList.remove('hidden');
             document.getElementById('nav-' + t).classList.add('nav-active');
-            document.getElementById('view-title').innerText = t === 'home' ? 'Inbox' : t.charAt(0).toUpperCase() + t.slice(1);
         };
+        window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
+        window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
-
+        
         lucide.createIcons();
     </script>
 </body>
