@@ -16,19 +16,27 @@
         body { font-family: sans-serif; background-color: #0f172a; color: #f1f5f9; overflow: hidden; margin: 0; }
         .glass-ui { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
         .nav-active { color: #6366f1; border-bottom: 3px solid #6366f1; }
-        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; position: relative; margin-left: auto; max-width: 85%; }
-        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); position: relative; max-width: 85%; }
-        video, img { max-width: 100%; border-radius: 12px; margin-top: 5px; }
+        
+        /* Professional Chat Bubbles */
+        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; position: relative; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); position: relative; width: fit-content; max-width: 80%; margin-bottom: 4px; }
+        
+        /* Fixed Sizes for Media */
+        video, img { max-width: 240px; max-height: 320px; border-radius: 12px; object-fit: cover; display: block; margin-top: 5px; }
+        audio { width: 210px; height: 36px; margin-top: 5px; filter: invert(0.1); }
         
         /* Floating Menu for Messages */
-        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .msg-menu { position: absolute; bottom: -50px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 6px; display: none; z-index: 100; min-width: 120px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
         .show-menu { display: block !important; }
-        .msg-menu button { width: 100%; text-align: left; padding: 6px 10px; font-size: 11px; color: white; display: flex; align-items: center; gap: 8px; border-radius: 6px; }
+        .msg-menu button { width: 100%; text-align: left; padding: 8px 12px; font-size: 12px; color: white; display: flex; align-items: center; gap: 10px; border-radius: 8px; transition: 0.2s; }
         .msg-menu button:hover { background: rgba(255,255,255,0.1); }
         
-        .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
-        .recording { animation: pulse 1.5s infinite; color: #ef4444 !important; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(99, 102, 241, 0.4); }
+        .recording { animation: pulse 1s infinite; color: #ef4444 !important; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -36,58 +44,58 @@
     <!-- --- AUTH SCREEN --- -->
     <div id="auth-screen" class="fixed inset-0 z-[1000] bg-slate-900 flex items-center justify-center p-6">
         <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700 text-center">
-            <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase tracking-tighter">MUSTAFAI</h1>
-            <p class="text-slate-400 text-sm mb-10 font-bold uppercase tracking-widest">Pro Communication</p>
+            <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase">MUSTAFAI</h1>
+            <p class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest">Professional Pro Max</p>
             <div id="login-form" class="space-y-4 text-left">
                 <input type="email" id="l-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="l-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold shadow-lg">Sign In</button>
+                <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition">Sign In</button>
                 <button onclick="handleAuth('google')" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-bold flex items-center justify-center gap-3">
                     <img src="https://i.imghippo.com/files/xwca3418zU.png" class="w-6 h-6 object-contain"> Google Login
                 </button>
-                <p class="text-center text-slate-400 text-sm mt-4">No account? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold">Sign Up</button></p>
+                <p class="text-center text-slate-400 text-sm mt-4">New here? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold underline">Sign Up</button></p>
             </div>
             <div id="signup-form" class="hidden space-y-4 text-left">
                 <input type="text" id="s-name" placeholder="Full Name" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <input type="text" id="s-username" placeholder="Username" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
+                <input type="text" id="s-username" placeholder="Unique Username" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="email" id="s-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="s-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <button onclick="handleAuth('signup')" class="w-full bg-emerald-600 py-4 rounded-2xl font-bold">Register</button>
-                <p class="text-center text-slate-400 text-sm mt-4">Joined already? <button onclick="toggleAuth(false)" class="text-indigo-400 font-bold">Login</button></p>
+                <button onclick="handleAuth('signup')" class="w-full bg-emerald-600 py-4 rounded-2xl font-bold">Register Now</button>
+                <p class="text-center text-slate-400 text-sm mt-4">Joined already? <button onclick="toggleAuth(false)" class="text-indigo-400 font-bold underline">Login</button></p>
             </div>
         </div>
     </div>
 
     <!-- --- APP SCREEN --- -->
     <div id="app-screen" class="hidden h-screen max-w-md mx-auto flex flex-col relative bg-slate-900 border-x border-white/5 shadow-2xl">
-        <header class="p-6 flex justify-between items-center bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <header class="p-5 flex justify-between items-center bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
             <div>
-                <h2 id="view-title" class="text-2xl font-bold">Inbox</h2>
-                <span class="text-[10px] text-indigo-400 font-bold">SECURE NETWORK</span>
+                <h2 id="view-title" class="text-xl font-bold">Inbox</h2>
+                <span class="text-[9px] text-indigo-400 font-bold tracking-widest uppercase">Mustafai Network</span>
             </div>
-            <button onclick="openSearch()" class="w-12 h-12 glass-ui rounded-2xl flex items-center justify-center text-indigo-400"><i data-lucide="user-plus"></i></button>
+            <button onclick="openSearch()" class="w-10 h-10 glass-ui rounded-xl flex items-center justify-center text-indigo-400"><i data-lucide="user-plus" class="w-5 h-5"></i></button>
         </header>
 
-        <main class="flex-1 overflow-y-auto px-6 pb-28">
-            <div id="view-home" class="tab-view space-y-4"><div id="chats-container" class="space-y-2"></div></div>
-            <div id="view-requests" class="tab-view hidden space-y-4"><div id="requests-container" class="space-y-3"></div></div>
+        <main class="flex-1 overflow-y-auto px-4 pb-28">
+            <div id="view-home" class="tab-view space-y-2"><div id="chats-container"></div></div>
+            <div id="view-requests" class="tab-view hidden space-y-4 pt-4"><div id="requests-container"></div></div>
             <div id="view-profile" class="tab-view hidden py-8 text-center">
-                <div class="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl" id="p-avatar">?</div>
+                <div class="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
                 <h2 id="p-name" class="text-2xl font-bold text-white">Name</h2>
-                <p id="p-username" class="text-indigo-400 mb-8 font-bold">@user</p>
+                <p id="p-username" class="text-indigo-400 mb-8 font-bold text-sm">@user</p>
                 <button onclick="toggleEditProfile(true)" class="w-full p-4 bg-slate-800 rounded-2xl border border-slate-700 mb-4 font-bold">Edit Profile</button>
-                <div id="p-info-edit" class="hidden space-y-4 bg-slate-800 p-6 rounded-3xl mb-4">
+                <div id="p-info-edit" class="hidden space-y-4 bg-slate-800 p-6 rounded-3xl mb-4 border border-slate-700">
                     <input type="text" id="edit-name-val" class="w-full p-4 bg-slate-700 rounded-xl outline-none" placeholder="New Name">
-                    <button onclick="saveProfile()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Save</button>
+                    <button onclick="saveProfile()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Update</button>
                 </div>
-                <button onclick="logout()" class="w-full p-4 bg-red-500/10 text-red-500 font-bold rounded-2xl border border-red-500/20">Sign Out</button>
+                <button onclick="logout()" class="w-full p-4 bg-red-500/10 text-red-500 font-bold rounded-2xl border border-red-500/20 mt-2">Sign Out</button>
             </div>
         </main>
 
-        <nav class="absolute bottom-0 left-0 right-0 p-6 glass-ui border-t border-white/5 flex justify-around items-center z-50">
-            <button onclick="switchTab('home')" id="nav-home" class="nav-active"><i data-lucide="message-square"></i></button>
-            <button onclick="switchTab('requests')" id="nav-requests" class="text-slate-500"><i data-lucide="bell"></i></button>
-            <button onclick="switchTab('profile')" id="nav-profile" class="text-slate-500"><i data-lucide="user"></i></button>
+        <nav class="absolute bottom-0 left-0 right-0 p-5 glass-ui border-t border-white/5 flex justify-around items-center z-50">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-active transition"><i data-lucide="message-square"></i></button>
+            <button onclick="switchTab('requests')" id="nav-requests" class="text-slate-500 transition"><i data-lucide="bell"></i></button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="text-slate-500 transition"><i data-lucide="user"></i></button>
         </nav>
     </div>
 
@@ -96,34 +104,34 @@
         <header class="p-4 bg-slate-800 flex items-center justify-between border-b border-white/5">
             <div class="flex items-center gap-3">
                 <button onclick="closeChat()"><i data-lucide="chevron-left"></i></button>
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold" id="chat-head-avatar">?</div>
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold text-sm" id="chat-head-avatar">?</div>
                 <h4 id="chat-head-name" class="font-bold text-sm">Friend</h4>
             </div>
             <div class="flex gap-4 px-2">
-                <button onclick="initCall('voice')" class="text-slate-400"><i data-lucide="phone"></i></button>
-                <button onclick="initCall('video')" class="text-slate-400"><i data-lucide="video"></i></button>
+                <button onclick="initCall('voice')" class="text-slate-400"><i data-lucide="phone" class="w-5 h-5"></i></button>
+                <button onclick="initCall('video')" class="text-slate-400"><i data-lucide="video" class="w-5 h-5"></i></button>
             </div>
         </header>
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-6 bg-slate-900/50"></div>
-        <div class="p-4 bg-slate-800 flex items-center gap-3">
-            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip"></i><input type="file" id="media-uploader" class="hidden" onchange="processMedia(this.files[0])"></label>
-            <button id="mic-btn" onclick="toggleVoiceRecord()" class="p-2 text-slate-400"><i data-lucide="mic"></i></button>
-            <input type="text" id="msg-input" placeholder="Type message..." class="flex-1 bg-slate-700/50 p-4 rounded-2xl outline-none">
-            <button onclick="sendTextMsg()" class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center"><i data-lucide="send"></i></button>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-950/20"></div>
+        <div class="p-4 bg-slate-800 flex items-center gap-2 border-t border-white/5">
+            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip" class="w-5 h-5"></i><input type="file" id="media-uploader" class="hidden" accept="image/*,video/*" onchange="processMedia(this.files[0])"></label>
+            <button id="mic-btn" onclick="toggleVoiceRecord()" class="p-2 text-slate-400"><i data-lucide="mic" class="w-5 h-5"></i></button>
+            <input type="text" id="msg-input" placeholder="Type a message..." class="flex-1 bg-slate-700/50 p-4 rounded-2xl outline-none text-sm text-white">
+            <button onclick="sendTextMsg()" class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition"><i data-lucide="send" class="w-5 h-5"></i></button>
         </div>
     </div>
 
-    <!-- --- SEARCH --- -->
+    <!-- --- SEARCH MODAL --- -->
     <div id="search-modal" class="fixed inset-0 z-[800] bg-slate-950/90 backdrop-blur-sm hidden flex items-center justify-center p-6">
         <div class="w-full max-w-xs glass-ui p-8 rounded-[2rem] space-y-4 text-center">
-            <h3 class="font-bold text-xl">Find Friend</h3>
-            <input type="text" id="search-username-input" placeholder="Username..." class="w-full bg-slate-700/50 p-4 rounded-xl outline-none border border-slate-600">
+            <h3 class="font-bold text-lg text-white">Add New Contact</h3>
+            <input type="text" id="search-username-input" placeholder="Username..." class="w-full p-4 bg-slate-700/50 rounded-xl outline-none border border-slate-600 text-sm">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
-            <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center">
-                <span id="res-username-display" class="font-bold">@user</span>
-                <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded-lg text-xs font-bold">Add</button>
+            <div id="search-result-box" class="hidden p-4 bg-slate-700/50 rounded-xl flex justify-between items-center border border-indigo-500/30">
+                <span id="res-username-display" class="font-bold text-sm">@user</span>
+                <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded-lg text-xs font-bold">Request</button>
             </div>
-            <button onclick="closeSearch()" class="w-full text-slate-500 font-bold text-sm">Close</button>
+            <button onclick="closeSearch()" class="w-full text-slate-500 font-bold text-xs uppercase tracking-widest">Close</button>
         </div>
     </div>
 
@@ -142,7 +150,7 @@
         var db = firebase.database();
         var provider = new firebase.auth.GoogleAuthProvider();
 
-        var myData, selectedFriend, myPeer, activeCall, myStream, mediaRecorder, audioChunks = [];
+        var myData, selectedFriend, myPeer, mediaRecorder, audioChunks = [];
 
         // --- AUTH ---
         window.toggleAuth = function(s) { document.getElementById('login-form').classList.toggle('hidden', s); document.getElementById('signup-form').classList.toggle('hidden', !s); };
@@ -179,46 +187,47 @@
             if(window.lucide) lucide.createIcons();
         });
 
-        // --- PROFILE ---
-        window.toggleEditProfile = function(e){ document.getElementById('p-info-display').classList.toggle('hidden',e); document.getElementById('p-info-edit').classList.toggle('hidden',!e); };
-        window.saveProfile = function(){
-            var n = document.getElementById('edit-name-val').value; if(!n) return;
-            db.ref('users/'+auth.currentUser.uid).update({name:n}); toggleEditProfile(false);
-        };
-
-        // --- INBOX LOGIC ---
+        // --- INBOX ---
         function loadInbox(){
             db.ref('friends/'+auth.currentUser.uid).on('value', function(snap){
                 var cont = document.getElementById('chats-container'); cont.innerHTML = "";
                 snap.forEach(function(c){
-                    db.ref('users/'+c.key).once('value').then(function(fs){
+                    var fUID = c.key;
+                    db.ref('users/'+fUID).once('value').then(function(fs){
                         var f = fs.val();
-                        var chatId = auth.currentUser.uid < f.uid ? auth.currentUser.uid+f.uid : f.uid+auth.currentUser.uid;
-                        db.ref('messages/'+chatId).limitToLast(1).on('value', function(mSnap){
+                        var chatId = auth.currentUser.uid < fUID ? auth.currentUser.uid+fUID : fUID+auth.currentUser.uid;
+                        db.ref('messages/'+chatId).on('value', function(mSnap){
                             var unread = 0; var lastT = "";
-                            mSnap.forEach(function(m){ lastT = formatTime(m.val().time); });
+                            mSnap.forEach(function(m){ 
+                                if(m.val().sender !== auth.currentUser.uid && !m.val().read) unread++;
+                                lastT = formatTime(m.val().time);
+                            });
                             
+                            var divId = "item-"+fUID;
+                            var existing = document.getElementById(divId); if(existing) existing.remove();
+
                             var div = document.createElement('div');
+                            div.id = divId;
                             div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer mb-2";
                             div.onclick = function(){ openChat(f) };
-                            div.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
+                            div.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold text-lg'>${f.name[0]}</div>
                                              <div class="flex-1">
-                                                 <div class="flex justify-between"><p class='font-bold text-sm'>${f.name}</p><p class='text-[10px] text-slate-500'>${lastT}</p></div>
-                                                 <p class='text-[10px] text-slate-400'>Tap to open chat</p>
+                                                 <div class="flex justify-between items-center"><p class='font-bold text-sm'>${f.name}</p><p class='text-[10px] text-slate-500'>${lastT}</p></div>
+                                                 <div class="flex justify-between items-center mt-1"><p class='text-[10px] text-slate-400'>Professional Chat</p>${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}</div>
                                              </div>`;
                             cont.prepend(div);
                         });
                     });
                 });
             });
-            // Requests
             db.ref('requests/'+auth.currentUser.uid).on('value', function(s){
                 var cont = document.getElementById('requests-container'); cont.innerHTML = "";
                 s.forEach(function(c){
                     var r = c.val();
                     var d = document.createElement('div');
-                    d.className = "p-4 glass-ui rounded-2xl flex justify-between items-center";
-                    d.innerHTML = `<span>${r.name}</span><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold">Accept</button>`;
+                    d.className = "p-4 glass-ui rounded-2xl flex justify-between items-center border border-white/5";
+                    d.innerHTML = `<div class='flex flex-col'><p class='font-bold text-sm'>${r.name}</p><p class='text-[10px] text-slate-500'>@${r.username}</p></div>
+                                   <button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/20">Accept</button>`;
                     cont.appendChild(d);
                 });
             });
@@ -236,26 +245,25 @@
                 var box = document.getElementById('chat-messages'); box.innerHTML = "";
                 snap.forEach(function(c){
                     var m = c.val(); var mid = c.key; var isMe = m.sender === auth.currentUser.uid;
-                    var div = document.createElement('div'); div.className = "flex "+(isMe?"justify-end":"justify-start");
+                    if(!isMe && !m.read) db.ref('messages/'+chatId+'/'+mid).update({read:true});
                     
-                    var menu = `<div id="menu-${mid}" class="msg-menu">
-                        <button onclick="downloadMedia('${m.data}','${m.type}')"><i data-lucide="download" class="w-3"></i> Download</button>
-                        ${isMe ? `<button onclick="editMsg('${chatId}','${mid}','${m.text}')"><i data-lucide="edit" class="w-3"></i> Edit</button>
-                                  <button onclick="deleteMsg('${chatId}','${mid}')" class="text-red-400"><i data-lucide="trash" class="w-3 text-red-400"></i> Delete</button>` : ''}
-                    </div>`;
-
-                    var msgContent = `<p class='text-sm'>${m.text||''}</p>`;
-                    if(m.type==='img') msgContent = `<img src='${m.data}'>`;
-                    if(m.type==='vid') msgContent = `<video src='${m.data}' controls></video>`;
-                    if(m.type==='audio') msgContent = `<audio src='${m.data}' controls class='w-full'></audio>`;
+                    var div = document.createElement('div'); div.className = "flex "+(isMe?"justify-end":"justify-start");
+                    var content = `<p class='text-sm'>${m.text||''}</p>`;
+                    if(m.type==='img') content = `<img src='${m.data}'>`;
+                    if(m.type==='vid') content = `<video src='${m.data}' controls></video>`;
+                    if(m.type==='audio') content = `<audio src='${m.data}' controls></audio>`;
 
                     div.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}'>
-                                        ${msgContent}
-                                        <div class="flex justify-between items-center mt-1">
-                                            <span class='text-[8px] opacity-60'>${m.edited ? 'Edited ' : ''}${formatTime(m.time)}</span>
-                                            <button onclick="toggleMsgMenu('${mid}')" class="p-1"><i data-lucide="more-horizontal" class="w-3"></i></button>
+                                        ${content}
+                                        <div class="flex justify-between items-center mt-1 gap-4">
+                                            <span class='text-[8px] opacity-60 font-bold'>${m.edited ? 'Edited ' : ''}${formatTime(m.time)}</span>
+                                            <button onclick="toggleMsgMenu('${mid}')" class="p-1 opacity-50"><i data-lucide="more-horizontal" class="w-3 h-3"></i></button>
                                         </div>
-                                        ${menu}
+                                        <div id="menu-${mid}" class="msg-menu">
+                                            <button onclick="downloadMedia('${m.data}','${m.type}')"><i data-lucide="download" class="w-3 h-3"></i> Download</button>
+                                            ${isMe ? `<button onclick="editMsg('${chatId}','${mid}','${m.text}')"><i data-lucide="edit-2" class="w-3 h-3"></i> Edit</button>
+                                                      <button onclick="deleteMsg('${chatId}','${mid}')" class="text-red-400"><i data-lucide="trash-2" class="w-3 h-3 text-red-400"></i> Delete</button>` : ''}
+                                        </div>
                                     </div>`;
                     box.appendChild(div);
                 });
@@ -264,28 +272,18 @@
             });
         };
 
-        // --- EDIT / DELETE FUNCTIONS ---
+        // --- ACTIONS ---
         window.toggleMsgMenu = function(id){
             var all = document.querySelectorAll('.msg-menu');
             all.forEach(m => { if(m.id !== 'menu-'+id) m.classList.remove('show-menu') });
             document.getElementById('menu-'+id).classList.toggle('show-menu');
         };
-
-        window.deleteMsg = function(cid, mid){
-            if(confirm("Delete this message for everyone?")){
-                db.ref('messages/'+cid+'/'+mid).remove();
-            }
+        window.deleteMsg = function(cid, mid){ if(confirm("Delete for everyone?")) db.ref('messages/'+cid+'/'+mid).remove(); };
+        window.editMsg = function(cid, mid, old){ 
+            if(!old) return alert("Can only edit text"); 
+            var n = prompt("Edit message:", old); 
+            if(n) db.ref('messages/'+cid+'/'+mid).update({text:n, edited:true}); 
         };
-
-        window.editMsg = function(cid, mid, oldText){
-            if(!oldText) return alert("Only text messages can be edited");
-            var n = prompt("Edit your message:", oldText);
-            if(n !== null && n !== "") {
-                db.ref('messages/'+cid+'/'+mid).update({ text: n, edited: true });
-            }
-        };
-
-        // --- VOICE / MEDIA ---
         window.toggleVoiceRecord = function() {
             var btn = document.getElementById('mic-btn');
             if (!mediaRecorder || mediaRecorder.state === "inactive") {
@@ -294,41 +292,39 @@
                     audioChunks = []; btn.classList.add('recording');
                     mediaRecorder.ondataavailable = function(e){ audioChunks.push(e.data); };
                     mediaRecorder.onstop = function(){
-                        var reader = new FileReader();
-                        reader.onload = function(e){
+                        var r = new FileReader(); r.onload = function(e){
                             var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:'audio', data:e.target.result, time:Date.now()});
+                            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:'audio', data:e.target.result, time:Date.now(), read:false});
                         };
-                        reader.readAsDataURL(new Blob(audioChunks));
-                        btn.classList.remove('recording');
+                        r.readAsDataURL(new Blob(audioChunks)); btn.classList.remove('recording');
                     };
-                });
+                }).catch(()=>alert("Grant Mic Permission"));
             } else mediaRecorder.stop();
         };
 
-        window.processMedia = function(file){
-            var r = new FileReader();
-            r.onload = function(e){
+        window.processMedia = function(f){
+            var r = new FileReader(); r.onload = function(e){
                 var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:file.type.startsWith('image')?'img':'vid', data:e.target.result, time:Date.now()});
-            };
-            r.readAsDataURL(file);
+                db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:f.type.startsWith('image')?'img':'vid', data:e.target.result, time:Date.now(), read:false});
+            }; r.readAsDataURL(f);
         };
-
         window.sendTextMsg = function(){
-            var v = document.getElementById('msg-input').value; if(!v) return;
+            var v = document.getElementById('msg-input').value.trim(); if(!v) return;
             var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, text:v, type:'text', time:Date.now()});
+            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, text:v, type:'text', time:Date.now(), read:false});
             document.getElementById('msg-input').value = "";
         };
 
         // --- UTILS ---
-        function formatTime(ts){ var d = new Date(ts); return d.getHours()+":"+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
+        function formatTime(ts){ if(!ts) return ""; var d = new Date(ts); return d.getHours()+":"+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
+        window.toggleEditProfile = function(e){ document.getElementById('p-info-display').classList.toggle('hidden',e); document.getElementById('p-info-edit').classList.toggle('hidden',!e); if(e) document.getElementById('edit-name-val').value = myData.name; };
+        window.saveProfile = function(){ var n = document.getElementById('edit-name-val').value; if(n) db.ref('users/'+auth.currentUser.uid).update({name:n}); toggleEditProfile(false); };
         window.switchTab = function(t){
             document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
             document.getElementById('view-'+t).classList.remove('hidden');
             document.getElementById('nav-'+t).classList.add('nav-active');
+            document.getElementById('view-title').innerText = t==='home'?'Inbox':t.charAt(0).toUpperCase()+t.slice(1);
         };
         window.openSearch = function(){document.getElementById('search-modal').classList.remove('hidden')};
         window.closeSearch = function(){document.getElementById('search-modal').classList.add('hidden')};
@@ -340,15 +336,8 @@
                 else alert("Not found");
             });
         };
-        window.sendFriendRequest = function(){
-            db.ref('requests/'+window.lastFoundUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:myData.name, username:myData.username});
-            alert("Sent!"); closeSearch();
-        };
-        window.acceptFriend = function(uid){
-            db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true);
-            db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true);
-            db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove();
-        };
+        window.sendFriendRequest = function(){ db.ref('requests/'+window.lastFoundUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:myData.name, username:myData.username}); alert("Sent!"); closeSearch(); };
+        window.acceptFriend = function(uid){ db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
         window.downloadMedia = function(d, t){ var a=document.createElement("a"); a.href=d; a.download="file."+(t==='img'?'jpg':'mp4'); a.click(); };
 
         window.onload = function(){ if(window.lucide) lucide.createIcons(); };
