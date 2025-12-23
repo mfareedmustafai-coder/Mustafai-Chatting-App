@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mustafai Chatting App | Pro Max</title>
+    <title>Mustafai Chatting App | Ultra Pro</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -19,8 +19,13 @@
         .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; position: relative; margin-left: auto; max-width: 85%; }
         .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); position: relative; max-width: 85%; }
         video, img { max-width: 100%; border-radius: 12px; margin-top: 5px; }
-        .media-menu { position: absolute; bottom: -35px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px; display: none; z-index: 50; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        
+        /* Floating Menu for Messages */
+        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .show-menu { display: block !important; }
+        .msg-menu button { width: 100%; text-align: left; padding: 6px 10px; font-size: 11px; color: white; display: flex; align-items: center; gap: 8px; border-radius: 6px; }
+        .msg-menu button:hover { background: rgba(255,255,255,0.1); }
+        
         .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
         .recording { animation: pulse 1.5s infinite; color: #ef4444 !important; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
@@ -29,38 +34,36 @@
 <body>
 
     <!-- --- AUTH SCREEN --- -->
-    <div id="auth-screen" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-6">
+    <div id="auth-screen" class="fixed inset-0 z-[1000] bg-slate-900 flex items-center justify-center p-6">
         <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700 text-center">
-            <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase">MUSTAFAI</h1>
-            <p class="text-slate-400 text-sm mb-10">The Professional Standard for Chat</p>
-
+            <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase tracking-tighter">MUSTAFAI</h1>
+            <p class="text-slate-400 text-sm mb-10 font-bold uppercase tracking-widest">Pro Communication</p>
             <div id="login-form" class="space-y-4 text-left">
-                <input type="email" id="l-email" placeholder="Email Address" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
+                <input type="email" id="l-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="l-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition active:scale-95">Sign In</button>
-                <button onclick="handleAuth('google')" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition">
+                <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold shadow-lg">Sign In</button>
+                <button onclick="handleAuth('google')" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-bold flex items-center justify-center gap-3">
                     <img src="https://i.imghippo.com/files/xwca3418zU.png" class="w-6 h-6 object-contain"> Google Login
                 </button>
-                <p class="text-center text-slate-400 text-sm mt-4">Need an account? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold">Sign Up</button></p>
+                <p class="text-center text-slate-400 text-sm mt-4">No account? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold">Sign Up</button></p>
             </div>
-
             <div id="signup-form" class="hidden space-y-4 text-left">
                 <input type="text" id="s-name" placeholder="Full Name" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <input type="text" id="s-username" placeholder="Username (Unique)" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <input type="email" id="s-email" placeholder="Email Address" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
+                <input type="text" id="s-username" placeholder="Username" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
+                <input type="email" id="s-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="s-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <button onclick="handleAuth('signup')" class="w-full bg-emerald-600 py-4 rounded-2xl font-bold">Create Account</button>
-                <p class="text-center text-slate-400 text-sm mt-4">Have an account? <button onclick="toggleAuth(false)" class="text-indigo-400 font-bold">Login</button></p>
+                <button onclick="handleAuth('signup')" class="w-full bg-emerald-600 py-4 rounded-2xl font-bold">Register</button>
+                <p class="text-center text-slate-400 text-sm mt-4">Joined already? <button onclick="toggleAuth(false)" class="text-indigo-400 font-bold">Login</button></p>
             </div>
         </div>
     </div>
 
-    <!-- --- APP INTERFACE --- -->
+    <!-- --- APP SCREEN --- -->
     <div id="app-screen" class="hidden h-screen max-w-md mx-auto flex flex-col relative bg-slate-900 border-x border-white/5 shadow-2xl">
         <header class="p-6 flex justify-between items-center bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
             <div>
                 <h2 id="view-title" class="text-2xl font-bold">Inbox</h2>
-                <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Secure Network</p>
+                <span class="text-[10px] text-indigo-400 font-bold">SECURE NETWORK</span>
             </div>
             <button onclick="openSearch()" class="w-12 h-12 glass-ui rounded-2xl flex items-center justify-center text-indigo-400"><i data-lucide="user-plus"></i></button>
         </header>
@@ -69,18 +72,13 @@
             <div id="view-home" class="tab-view space-y-4"><div id="chats-container" class="space-y-2"></div></div>
             <div id="view-requests" class="tab-view hidden space-y-4"><div id="requests-container" class="space-y-3"></div></div>
             <div id="view-profile" class="tab-view hidden py-8 text-center">
-                <div class="w-28 h-28 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-4xl font-bold mx-auto mb-6" id="p-avatar">U</div>
-                <div id="p-info-display">
-                    <h2 id="p-name" class="text-2xl font-bold text-white">Name</h2>
-                    <p id="p-username" class="text-indigo-400 mb-8">@user</p>
-                    <button onclick="toggleEditProfile(true)" class="w-full p-4 bg-slate-800 rounded-2xl font-bold border border-slate-700 mb-4">Edit Profile</button>
-                </div>
-                <div id="p-info-edit" class="hidden space-y-4 bg-slate-800 p-6 rounded-3xl">
-                    <input type="text" id="edit-name-val" class="w-full p-4 bg-slate-700 rounded-xl outline-none" placeholder="New Display Name">
-                    <div class="flex gap-2">
-                        <button onclick="saveProfile()" class="flex-1 bg-indigo-600 py-3 rounded-xl font-bold">Save</button>
-                        <button onclick="toggleEditProfile(false)" class="flex-1 bg-slate-600 py-3 rounded-xl font-bold">Cancel</button>
-                    </div>
+                <div class="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl" id="p-avatar">?</div>
+                <h2 id="p-name" class="text-2xl font-bold text-white">Name</h2>
+                <p id="p-username" class="text-indigo-400 mb-8 font-bold">@user</p>
+                <button onclick="toggleEditProfile(true)" class="w-full p-4 bg-slate-800 rounded-2xl border border-slate-700 mb-4 font-bold">Edit Profile</button>
+                <div id="p-info-edit" class="hidden space-y-4 bg-slate-800 p-6 rounded-3xl mb-4">
+                    <input type="text" id="edit-name-val" class="w-full p-4 bg-slate-700 rounded-xl outline-none" placeholder="New Name">
+                    <button onclick="saveProfile()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Save</button>
                 </div>
                 <button onclick="logout()" class="w-full p-4 bg-red-500/10 text-red-500 font-bold rounded-2xl border border-red-500/20">Sign Out</button>
             </div>
@@ -94,45 +92,42 @@
     </div>
 
     <!-- --- CHAT WINDOW --- -->
-    <div id="chat-window" class="fixed inset-0 z-[60] bg-slate-900 hidden flex flex-col">
-        <header class="p-4 bg-slate-800 flex items-center justify-between">
+    <div id="chat-window" class="fixed inset-0 z-[600] bg-slate-900 hidden flex flex-col">
+        <header class="p-4 bg-slate-800 flex items-center justify-between border-b border-white/5">
             <div class="flex items-center gap-3">
                 <button onclick="closeChat()"><i data-lucide="chevron-left"></i></button>
                 <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold" id="chat-head-avatar">?</div>
                 <h4 id="chat-head-name" class="font-bold text-sm">Friend</h4>
             </div>
-            <div class="flex gap-4">
+            <div class="flex gap-4 px-2">
                 <button onclick="initCall('voice')" class="text-slate-400"><i data-lucide="phone"></i></button>
                 <button onclick="initCall('video')" class="text-slate-400"><i data-lucide="video"></i></button>
             </div>
         </header>
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-8 bg-slate-900/50"></div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-6 bg-slate-900/50"></div>
         <div class="p-4 bg-slate-800 flex items-center gap-3">
-            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip"></i><input type="file" id="media-uploader" class="hidden" accept="image/*,video/*" onchange="processMedia(this.files[0])"></label>
-            
+            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip"></i><input type="file" id="media-uploader" class="hidden" onchange="processMedia(this.files[0])"></label>
             <button id="mic-btn" onclick="toggleVoiceRecord()" class="p-2 text-slate-400"><i data-lucide="mic"></i></button>
-
             <input type="text" id="msg-input" placeholder="Type message..." class="flex-1 bg-slate-700/50 p-4 rounded-2xl outline-none">
             <button onclick="sendTextMsg()" class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center"><i data-lucide="send"></i></button>
         </div>
     </div>
 
     <!-- --- SEARCH --- -->
-    <div id="search-modal" class="fixed inset-0 z-[80] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-6">
+    <div id="search-modal" class="fixed inset-0 z-[800] bg-slate-950/90 backdrop-blur-sm hidden flex items-center justify-center p-6">
         <div class="w-full max-w-xs glass-ui p-8 rounded-[2rem] space-y-4 text-center">
-            <h3 class="font-bold text-xl text-white">Add Contact</h3>
-            <input type="text" id="search-username-input" placeholder="Username..." class="w-full bg-slate-700/50 p-4 rounded-xl outline-none text-white border border-slate-600">
+            <h3 class="font-bold text-xl">Find Friend</h3>
+            <input type="text" id="search-username-input" placeholder="Username..." class="w-full bg-slate-700/50 p-4 rounded-xl outline-none border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
-            <div id="search-result-box" class="hidden p-4 bg-slate-700/50 rounded-xl flex justify-between items-center">
+            <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center">
                 <span id="res-username-display" class="font-bold">@user</span>
-                <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded-lg text-xs">Add</button>
+                <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded-lg text-xs font-bold">Add</button>
             </div>
             <button onclick="closeSearch()" class="w-full text-slate-500 font-bold text-sm">Close</button>
         </div>
     </div>
 
     <script>
-        // --- FIREBASE CONFIG ---
         var firebaseConfig = {
             apiKey: "AIzaSyDPdaRnyQnGbzmqSfvAy7pCWHt2q-cX9xQ",
             authDomain: "chatting-app-5fc24.firebaseapp.com",
@@ -142,62 +137,40 @@
             messagingSenderId: "180248992868",
             appId: "1:180248992868:web:c61875bc5b6999b7a15371"
         };
-
         firebase.initializeApp(firebaseConfig);
         var auth = firebase.auth();
         var db = firebase.database();
         var provider = new firebase.auth.GoogleAuthProvider();
 
-        var myData = null;
-        var selectedFriend = null;
-        var myPeer = null;
-        var mediaRecorder;
-        var audioChunks = [];
+        var myData, selectedFriend, myPeer, activeCall, myStream, mediaRecorder, audioChunks = [];
 
         // --- AUTH ---
-        window.toggleAuth = function(show) {
-            document.getElementById('login-form').classList.toggle('hidden', show);
-            document.getElementById('signup-form').classList.toggle('hidden', !show);
-        };
-
-        window.handleAuth = function(mode) {
-            if(mode === 'login'){
-                auth.signInWithEmailAndPassword(document.getElementById('l-email').value, document.getElementById('l-password').value).catch(function(e){alert(e.message)});
-            } else if(mode === 'signup'){
-                var name = document.getElementById('s-name').value;
+        window.toggleAuth = function(s) { document.getElementById('login-form').classList.toggle('hidden', s); document.getElementById('signup-form').classList.toggle('hidden', !s); };
+        window.handleAuth = function(m) {
+            if(m==='login') auth.signInWithEmailAndPassword(document.getElementById('l-email').value, document.getElementById('l-password').value).catch(alert);
+            else if(m==='signup') {
                 var user = document.getElementById('s-username').value.toLowerCase().trim();
-                db.ref('usernames/'+user).once('value').then(function(s){
+                db.ref('usernames/'+user).once('value', function(s){
                     if(s.exists()) return alert("Username taken!");
                     auth.createUserWithEmailAndPassword(document.getElementById('s-email').value, document.getElementById('s-password').value).then(function(res){
-                        db.ref('users/'+res.user.uid).set({uid:res.user.uid, name:name, username:user});
+                        db.ref('users/'+res.user.uid).set({uid:res.user.uid, name:document.getElementById('s-name').value, username:user});
                         db.ref('usernames/'+user).set(res.user.uid);
                     });
                 });
-            } else {
-                auth.signInWithPopup(provider).then(function(res){
-                    db.ref('users/'+res.user.uid).once('value').then(function(s){
-                        if(!s.exists()){
-                            var u = "user" + Math.floor(Math.random()*1000);
-                            db.ref('users/'+res.user.uid).set({uid:res.user.uid, name:res.user.displayName, username:u});
-                            db.ref('usernames/'+u).set(res.user.uid);
-                        }
-                    });
-                });
-            }
+            } else auth.signInWithPopup(provider);
         };
-
         window.logout = function() { auth.signOut(); };
 
-        auth.onAuthStateChanged(function(user){
-            if(user){
-                db.ref('users/'+user.uid).on('value', function(s){
+        auth.onAuthStateChanged(function(u){
+            if(u){
+                db.ref('users/'+u.uid).on('value', function(s){
                     myData = s.val();
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('app-screen').classList.remove('hidden');
                     document.getElementById('p-name').innerText = myData.name;
                     document.getElementById('p-username').innerText = '@' + myData.username;
                     document.getElementById('p-avatar').innerText = myData.name[0];
-                    loadRealtimeData();
+                    loadInbox();
                 });
             } else {
                 document.getElementById('auth-screen').classList.remove('hidden');
@@ -206,194 +179,177 @@
             if(window.lucide) lucide.createIcons();
         });
 
-        // --- CHAT & UNREAD LOGIC ---
-        function loadRealtimeData(){
-            // Friend List with Time and Unread Count
+        // --- PROFILE ---
+        window.toggleEditProfile = function(e){ document.getElementById('p-info-display').classList.toggle('hidden',e); document.getElementById('p-info-edit').classList.toggle('hidden',!e); };
+        window.saveProfile = function(){
+            var n = document.getElementById('edit-name-val').value; if(!n) return;
+            db.ref('users/'+auth.currentUser.uid).update({name:n}); toggleEditProfile(false);
+        };
+
+        // --- INBOX LOGIC ---
+        function loadInbox(){
             db.ref('friends/'+auth.currentUser.uid).on('value', function(snap){
                 var cont = document.getElementById('chats-container'); cont.innerHTML = "";
                 snap.forEach(function(c){
-                    var fUID = c.key;
-                    db.ref('users/'+fUID).once('value').then(function(fs){
+                    db.ref('users/'+c.key).once('value').then(function(fs){
                         var f = fs.val();
-                        var chatId = auth.currentUser.uid < fUID ? auth.currentUser.uid+fUID : fUID+auth.currentUser.uid;
-                        
-                        // Get Last Message & Unread Count
-                        db.ref('messages/'+chatId).limitToLast(10).on('value', function(mSnap){
-                            var msgs = mSnap.val();
-                            var lastTime = "";
-                            var unreadCount = 0;
-                            var lastMsg = "";
-
-                            if(msgs){
-                                Object.keys(msgs).forEach(function(key){
-                                    var m = msgs[key];
-                                    if(m.sender !== auth.currentUser.uid && !m.read){
-                                        unreadCount++;
-                                    }
-                                    lastTime = formatTime(m.time);
-                                });
-                            }
-
-                            var divId = "friend-" + fUID;
-                            var existing = document.getElementById(divId);
-                            if(existing) existing.remove();
-
+                        var chatId = auth.currentUser.uid < f.uid ? auth.currentUser.uid+f.uid : f.uid+auth.currentUser.uid;
+                        db.ref('messages/'+chatId).limitToLast(1).on('value', function(mSnap){
+                            var unread = 0; var lastT = "";
+                            mSnap.forEach(function(m){ lastT = formatTime(m.val().time); });
+                            
                             var div = document.createElement('div');
-                            div.id = divId;
-                            div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer";
+                            div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer mb-2";
                             div.onclick = function(){ openChat(f) };
-                            div.innerHTML = `
-                                <div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between">
-                                        <p class='font-bold text-sm'>${f.name}</p>
-                                        <p class='text-[10px] text-slate-500'>${lastTime}</p>
-                                    </div>
-                                    <div class="flex justify-between items-center mt-1">
-                                        <p class='text-[10px] text-slate-400'>Click to chat</p>
-                                        ${unreadCount > 0 ? `<span class="unread-badge">${unreadCount}</span>` : ''}
-                                    </div>
-                                </div>`;
+                            div.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
+                                             <div class="flex-1">
+                                                 <div class="flex justify-between"><p class='font-bold text-sm'>${f.name}</p><p class='text-[10px] text-slate-500'>${lastT}</p></div>
+                                                 <p class='text-[10px] text-slate-400'>Tap to open chat</p>
+                                             </div>`;
                             cont.prepend(div);
                         });
                     });
                 });
             });
-
             // Requests
-            db.ref('requests/'+auth.currentUser.uid).on('value', function(snap){
+            db.ref('requests/'+auth.currentUser.uid).on('value', function(s){
                 var cont = document.getElementById('requests-container'); cont.innerHTML = "";
-                snap.forEach(function(c){
+                s.forEach(function(c){
                     var r = c.val();
-                    var div = document.createElement('div');
-                    div.className = "p-4 glass-ui rounded-2xl flex justify-between items-center";
-                    div.innerHTML = `<div><p class='font-bold'>${r.name}</p></div><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold">Accept</button>`;
-                    cont.appendChild(div);
+                    var d = document.createElement('div');
+                    d.className = "p-4 glass-ui rounded-2xl flex justify-between items-center";
+                    d.innerHTML = `<span>${r.name}</span><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold">Accept</button>`;
+                    cont.appendChild(d);
                 });
             });
         }
 
-        window.openChat = function(friend){
-            selectedFriend = friend;
-            document.getElementById('chat-head-name').innerText = friend.name;
-            document.getElementById('chat-head-avatar').innerText = friend.name[0];
+        // --- CHAT WINDOW ---
+        window.openChat = function(f){
+            selectedFriend = f;
+            document.getElementById('chat-head-name').innerText = f.name;
+            document.getElementById('chat-head-avatar').innerText = f.name[0];
             document.getElementById('chat-window').classList.remove('hidden');
-            var chatId = auth.currentUser.uid < friend.uid ? auth.currentUser.uid+friend.uid : friend.uid+auth.currentUser.uid;
+            var chatId = auth.currentUser.uid < f.uid ? auth.currentUser.uid+f.uid : f.uid+auth.currentUser.uid;
             
             db.ref('messages/'+chatId).on('value', function(snap){
                 var box = document.getElementById('chat-messages'); box.innerHTML = "";
                 snap.forEach(function(c){
-                    var m = c.val(); var msgId = c.key; var isMe = m.sender === auth.currentUser.uid;
-                    
-                    // Mark as read
-                    if(!isMe && !m.read) db.ref('messages/'+chatId+'/'+msgId).update({read: true});
-
+                    var m = c.val(); var mid = c.key; var isMe = m.sender === auth.currentUser.uid;
                     var div = document.createElement('div'); div.className = "flex "+(isMe?"justify-end":"justify-start");
-                    var content = `<p class='text-sm'>${m.text || ''}</p>`;
                     
-                    if(m.type === 'audio') content = `<audio controls class="max-w-full"><source src="${m.data}" type="audio/webm"></audio>`;
-                    if(m.type === 'img') content = `<img src="${m.data}">`;
-                    if(m.type === 'vid') content = `<video src="${m.data}" controls></video>`;
-                    
-                    div.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}'>${content}<p class='text-[8px] opacity-50 text-right mt-1'>${formatTime(m.time)}</p></div>`;
+                    var menu = `<div id="menu-${mid}" class="msg-menu">
+                        <button onclick="downloadMedia('${m.data}','${m.type}')"><i data-lucide="download" class="w-3"></i> Download</button>
+                        ${isMe ? `<button onclick="editMsg('${chatId}','${mid}','${m.text}')"><i data-lucide="edit" class="w-3"></i> Edit</button>
+                                  <button onclick="deleteMsg('${chatId}','${mid}')" class="text-red-400"><i data-lucide="trash" class="w-3 text-red-400"></i> Delete</button>` : ''}
+                    </div>`;
+
+                    var msgContent = `<p class='text-sm'>${m.text||''}</p>`;
+                    if(m.type==='img') msgContent = `<img src='${m.data}'>`;
+                    if(m.type==='vid') msgContent = `<video src='${m.data}' controls></video>`;
+                    if(m.type==='audio') msgContent = `<audio src='${m.data}' controls class='w-full'></audio>`;
+
+                    div.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}'>
+                                        ${msgContent}
+                                        <div class="flex justify-between items-center mt-1">
+                                            <span class='text-[8px] opacity-60'>${m.edited ? 'Edited ' : ''}${formatTime(m.time)}</span>
+                                            <button onclick="toggleMsgMenu('${mid}')" class="p-1"><i data-lucide="more-horizontal" class="w-3"></i></button>
+                                        </div>
+                                        ${menu}
+                                    </div>`;
                     box.appendChild(div);
                 });
                 box.scrollTop = box.scrollHeight;
+                lucide.createIcons();
             });
         };
 
-        // --- VOICE RECORDING ---
+        // --- EDIT / DELETE FUNCTIONS ---
+        window.toggleMsgMenu = function(id){
+            var all = document.querySelectorAll('.msg-menu');
+            all.forEach(m => { if(m.id !== 'menu-'+id) m.classList.remove('show-menu') });
+            document.getElementById('menu-'+id).classList.toggle('show-menu');
+        };
+
+        window.deleteMsg = function(cid, mid){
+            if(confirm("Delete this message for everyone?")){
+                db.ref('messages/'+cid+'/'+mid).remove();
+            }
+        };
+
+        window.editMsg = function(cid, mid, oldText){
+            if(!oldText) return alert("Only text messages can be edited");
+            var n = prompt("Edit your message:", oldText);
+            if(n !== null && n !== "") {
+                db.ref('messages/'+cid+'/'+mid).update({ text: n, edited: true });
+            }
+        };
+
+        // --- VOICE / MEDIA ---
         window.toggleVoiceRecord = function() {
             var btn = document.getElementById('mic-btn');
             if (!mediaRecorder || mediaRecorder.state === "inactive") {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-                    mediaRecorder = new MediaRecorder(stream);
-                    mediaRecorder.start();
-                    audioChunks = [];
-                    btn.classList.add('recording');
-                    
-                    mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
-                    mediaRecorder.onstop = function() {
-                        var audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(s) {
+                    mediaRecorder = new MediaRecorder(s); mediaRecorder.start();
+                    audioChunks = []; btn.classList.add('recording');
+                    mediaRecorder.ondataavailable = function(e){ audioChunks.push(e.data); };
+                    mediaRecorder.onstop = function(){
                         var reader = new FileReader();
-                        reader.onload = function(e) {
-                            var base64 = e.target.result;
-                            var chatId = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                            db.ref('messages/'+chatId).push({
-                                sender: auth.currentUser.uid,
-                                type: 'audio',
-                                data: base64,
-                                time: Date.now(),
-                                read: false
-                            });
+                        reader.onload = function(e){
+                            var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
+                            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:'audio', data:e.target.result, time:Date.now()});
                         };
-                        reader.readAsDataURL(audioBlob);
+                        reader.readAsDataURL(new Blob(audioChunks));
                         btn.classList.remove('recording');
                     };
                 });
-            } else {
-                mediaRecorder.stop();
-            }
+            } else mediaRecorder.stop();
+        };
+
+        window.processMedia = function(file){
+            var r = new FileReader();
+            r.onload = function(e){
+                var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
+                db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:file.type.startsWith('image')?'img':'vid', data:e.target.result, time:Date.now()});
+            };
+            r.readAsDataURL(file);
         };
 
         window.sendTextMsg = function(){
             var v = document.getElementById('msg-input').value; if(!v) return;
-            var chatId = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-            db.ref('messages/'+chatId).push({
-                sender: auth.currentUser.uid, 
-                text: v, 
-                type: 'text', 
-                time: Date.now(),
-                read: false
-            });
+            var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
+            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, text:v, type:'text', time:Date.now()});
             document.getElementById('msg-input').value = "";
         };
 
         // --- UTILS ---
-        function formatTime(ts) {
-            if(!ts) return "";
-            var d = new Date(ts);
-            return d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
-        }
-
-        window.processMedia = function(file){
-            var reader = new FileReader();
-            reader.onload = function(e){
-                var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:file.type.startsWith('image')?'img':'vid', data:e.target.result, time: Date.now(), read: false});
-            };
-            reader.readAsDataURL(file);
-        };
-
+        function formatTime(ts){ var d = new Date(ts); return d.getHours()+":"+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
         window.switchTab = function(t){
-            document.querySelectorAll('.tab-view').forEach(function(v){v.classList.add('hidden')});
-            document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('nav-active')});
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
             document.getElementById('view-'+t).classList.remove('hidden');
             document.getElementById('nav-'+t).classList.add('nav-active');
         };
-
-        window.closeChat = function(){document.getElementById('chat-window').classList.add('hidden');};
         window.openSearch = function(){document.getElementById('search-modal').classList.remove('hidden')};
         window.closeSearch = function(){document.getElementById('search-modal').classList.add('hidden')};
+        window.closeChat = function(){document.getElementById('chat-window').classList.add('hidden')};
         window.findUser = function(){
             var u = document.getElementById('search-username-input').value.toLowerCase().trim();
-            db.ref('usernames/'+u).once('value').then(function(s){
-                if(s.exists()){
-                    window.lastFoundUID = s.val();
-                    document.getElementById('res-username-display').innerText = '@'+u;
-                    document.getElementById('search-result-box').classList.remove('hidden');
-                } else alert("Not found");
+            db.ref('usernames/'+u).once('value', function(s){
+                if(s.exists()){ window.lastFoundUID = s.val(); document.getElementById('res-username-display').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); }
+                else alert("Not found");
             });
         };
         window.sendFriendRequest = function(){
             db.ref('requests/'+window.lastFoundUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:myData.name, username:myData.username});
-            alert("Sent!"); document.getElementById('search-modal').classList.add('hidden');
+            alert("Sent!"); closeSearch();
         };
         window.acceptFriend = function(uid){
             db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true);
             db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true);
             db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove();
         };
+        window.downloadMedia = function(d, t){ var a=document.createElement("a"); a.href=d; a.download="file."+(t==='img'?'jpg':'mp4'); a.click(); };
 
         window.onload = function(){ if(window.lucide) lucide.createIcons(); };
     </script>
