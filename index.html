@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mustafai Chatting App | Pro Max</title>
     
-    <!-- Scripts for UI and Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js"></script>
-    
-    <!-- Firebase Compat SDKs (Mobile Errors Fix) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -24,8 +21,9 @@
         video, img { max-width: 100%; border-radius: 12px; margin-top: 5px; }
         .media-menu { position: absolute; bottom: -35px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px; display: none; z-index: 50; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         .show-menu { display: block !important; }
-        .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
-        .call-video-self { width: 100px; height: 140px; position: absolute; top: 20px; right: 20px; border: 2px solid white; z-index: 60; }
+        .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
+        .recording { animation: pulse 1.5s infinite; color: #ef4444 !important; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -40,12 +38,9 @@
                 <input type="email" id="l-email" placeholder="Email Address" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="l-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold hover:bg-indigo-700 transition active:scale-95">Sign In</button>
-                
-                <!-- Google Button with your NEW IMAGE LINK -->
                 <button onclick="handleAuth('google')" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition">
                     <img src="https://i.imghippo.com/files/xwca3418zU.png" class="w-6 h-6 object-contain"> Google Login
                 </button>
-
                 <p class="text-center text-slate-400 text-sm mt-4">Need an account? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold">Sign Up</button></p>
             </div>
 
@@ -114,28 +109,11 @@
         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-8 bg-slate-900/50"></div>
         <div class="p-4 bg-slate-800 flex items-center gap-3">
             <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip"></i><input type="file" id="media-uploader" class="hidden" accept="image/*,video/*" onchange="processMedia(this.files[0])"></label>
+            
+            <button id="mic-btn" onclick="toggleVoiceRecord()" class="p-2 text-slate-400"><i data-lucide="mic"></i></button>
+
             <input type="text" id="msg-input" placeholder="Type message..." class="flex-1 bg-slate-700/50 p-4 rounded-2xl outline-none">
             <button onclick="sendTextMsg()" class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center"><i data-lucide="send"></i></button>
-        </div>
-    </div>
-
-    <!-- --- CALL OVERLAY --- -->
-    <div id="call-overlay" class="fixed inset-0 z-[200] bg-slate-950 hidden flex flex-col items-center justify-center text-center p-6">
-        <div id="call-ui-ringing" class="space-y-6">
-            <div class="w-32 h-32 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-4xl font-bold mx-auto shadow-2xl relative"><span id="call-avatar">?</span></div>
-            <h2 id="call-target-name" class="text-3xl font-bold">Connecting...</h2>
-            <div id="call-actions-incoming" class="flex gap-10 mt-20 hidden">
-                <button onclick="rejectCall()" class="bg-red-500 w-16 h-16 rounded-full flex items-center justify-center"><i data-lucide="phone-off"></i></button>
-                <button onclick="acceptCall()" class="bg-emerald-500 w-16 h-16 rounded-full flex items-center justify-center"><i data-lucide="phone"></i></button>
-            </div>
-            <div id="call-actions-outgoing" class="mt-20">
-                <button onclick="endCall()" class="bg-red-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto"><i data-lucide="phone-off"></i></button>
-            </div>
-        </div>
-        <div id="call-ui-active" class="absolute inset-0 hidden">
-            <video id="remote-vid" class="call-video-full" autoplay playsinline></video>
-            <video id="local-vid" class="call-video-self" autoplay playsinline muted></video>
-            <button onclick="endCall()" class="absolute bottom-12 left-1/2 -translate-x-1/2 w-20 h-20 bg-red-500 rounded-full flex justify-center items-center z-[100]"><i data-lucide="phone-off"></i></button>
         </div>
     </div>
 
@@ -143,7 +121,7 @@
     <div id="search-modal" class="fixed inset-0 z-[80] bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-6">
         <div class="w-full max-w-xs glass-ui p-8 rounded-[2rem] space-y-4 text-center">
             <h3 class="font-bold text-xl text-white">Add Contact</h3>
-            <input type="text" id="search-username-input" placeholder="Enter Username..." class="w-full bg-slate-700/50 p-4 rounded-xl outline-none text-white border border-slate-600">
+            <input type="text" id="search-username-input" placeholder="Username..." class="w-full bg-slate-700/50 p-4 rounded-xl outline-none text-white border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
             <div id="search-result-box" class="hidden p-4 bg-slate-700/50 rounded-xl flex justify-between items-center">
                 <span id="res-username-display" class="font-bold">@user</span>
@@ -173,8 +151,8 @@
         var myData = null;
         var selectedFriend = null;
         var myPeer = null;
-        var activeCall = null;
-        var myStream = null;
+        var mediaRecorder;
+        var audioChunks = [];
 
         // --- AUTH ---
         window.toggleAuth = function(show) {
@@ -210,18 +188,6 @@
 
         window.logout = function() { auth.signOut(); };
 
-        // --- PROFILE ---
-        window.toggleEditProfile = function(e){
-            document.getElementById('p-info-display').classList.toggle('hidden', e);
-            document.getElementById('p-info-edit').classList.toggle('hidden', !e);
-        };
-        window.saveProfile = function(){
-            var n = document.getElementById('edit-name-val').value;
-            if(!n) return;
-            db.ref('users/'+auth.currentUser.uid).update({name:n});
-            toggleEditProfile(false);
-        };
-
         auth.onAuthStateChanged(function(user){
             if(user){
                 db.ref('users/'+user.uid).on('value', function(s){
@@ -231,7 +197,6 @@
                     document.getElementById('p-name').innerText = myData.name;
                     document.getElementById('p-username').innerText = '@' + myData.username;
                     document.getElementById('p-avatar').innerText = myData.name[0];
-                    if(!myPeer) initPeerSystem(user.uid);
                     loadRealtimeData();
                 });
             } else {
@@ -241,96 +206,69 @@
             if(window.lucide) lucide.createIcons();
         });
 
-        // --- PEER ---
-        function initPeerSystem(uid) {
-            myPeer = new Peer(uid);
-            myPeer.on('call', function(call){
-                activeCall = call;
-                db.ref('users/'+call.peer).once('value').then(function(s){
-                    document.getElementById('call-overlay').classList.remove('hidden');
-                    document.getElementById('call-target-name').innerText = s.val().name;
-                    document.getElementById('call-actions-incoming').classList.remove('hidden');
-                    document.getElementById('call-actions-outgoing').classList.add('hidden');
+        // --- CHAT & UNREAD LOGIC ---
+        function loadRealtimeData(){
+            // Friend List with Time and Unread Count
+            db.ref('friends/'+auth.currentUser.uid).on('value', function(snap){
+                var cont = document.getElementById('chats-container'); cont.innerHTML = "";
+                snap.forEach(function(c){
+                    var fUID = c.key;
+                    db.ref('users/'+fUID).once('value').then(function(fs){
+                        var f = fs.val();
+                        var chatId = auth.currentUser.uid < fUID ? auth.currentUser.uid+fUID : fUID+auth.currentUser.uid;
+                        
+                        // Get Last Message & Unread Count
+                        db.ref('messages/'+chatId).limitToLast(10).on('value', function(mSnap){
+                            var msgs = mSnap.val();
+                            var lastTime = "";
+                            var unreadCount = 0;
+                            var lastMsg = "";
+
+                            if(msgs){
+                                Object.keys(msgs).forEach(function(key){
+                                    var m = msgs[key];
+                                    if(m.sender !== auth.currentUser.uid && !m.read){
+                                        unreadCount++;
+                                    }
+                                    lastTime = formatTime(m.time);
+                                });
+                            }
+
+                            var divId = "friend-" + fUID;
+                            var existing = document.getElementById(divId);
+                            if(existing) existing.remove();
+
+                            var div = document.createElement('div');
+                            div.id = divId;
+                            div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer";
+                            div.onclick = function(){ openChat(f) };
+                            div.innerHTML = `
+                                <div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between">
+                                        <p class='font-bold text-sm'>${f.name}</p>
+                                        <p class='text-[10px] text-slate-500'>${lastTime}</p>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-1">
+                                        <p class='text-[10px] text-slate-400'>Click to chat</p>
+                                        ${unreadCount > 0 ? `<span class="unread-badge">${unreadCount}</span>` : ''}
+                                    </div>
+                                </div>`;
+                            cont.prepend(div);
+                        });
+                    });
                 });
             });
-        }
 
-        window.initCall = function(type){
-            document.getElementById('call-overlay').classList.remove('hidden');
-            document.getElementById('call-target-name').innerText = selectedFriend.name;
-            navigator.mediaDevices.getUserMedia({video: type==='video', audio:true}).then(function(s){
-                myStream = s;
-                activeCall = myPeer.call(selectedFriend.uid, s);
-                setupCallStream(activeCall);
-            });
-        };
-
-        window.acceptCall = function(){
-            navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(function(s){
-                myStream = s;
-                activeCall.answer(s);
-                setupCallStream(activeCall);
-            });
-        };
-
-        function setupCallStream(call){
-            document.getElementById('call-ui-ringing').classList.add('hidden');
-            document.getElementById('call-ui-active').classList.remove('hidden');
-            document.getElementById('local-vid').srcObject = myStream;
-            call.on('stream', function(rem){ document.getElementById('remote-vid').srcObject = rem; });
-        }
-
-        window.endCall = function(){
-            if(activeCall) activeCall.close();
-            if(myStream) myStream.getTracks().forEach(function(t){t.stop()});
-            document.getElementById('call-overlay').classList.add('hidden');
-            location.reload();
-        };
-
-        window.rejectCall = function(){ activeCall.close(); document.getElementById('call-overlay').classList.add('hidden'); };
-
-        // --- MEDIA ---
-        window.processMedia = function(file){
-            var reader = new FileReader();
-            reader.onload = function(e){
-                var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:file.type.startsWith('image')?'img':'vid', data:e.target.result});
-            };
-            reader.readAsDataURL(file);
-        };
-
-        window.toggleMediaMenu = function(id){ document.getElementById('menu-'+id).classList.toggle('show-menu'); };
-        window.downloadMedia = function(d, t){
-            var a = document.createElement("a");
-            a.href = d;
-            a.download = "mustafai_file."+(t==='img'?'jpg':'mp4');
-            a.click();
-        };
-
-        // --- CHAT LOGIC ---
-        function loadRealtimeData(){
+            // Requests
             db.ref('requests/'+auth.currentUser.uid).on('value', function(snap){
                 var cont = document.getElementById('requests-container'); cont.innerHTML = "";
                 snap.forEach(function(c){
                     var r = c.val();
                     var div = document.createElement('div');
                     div.className = "p-4 glass-ui rounded-2xl flex justify-between items-center";
-                    div.innerHTML = "<div><p class='font-bold'>"+r.name+"</p></div><button onclick='acceptFriend(\""+r.uid+"\")' class='bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold'>Accept</button>";
+                    div.innerHTML = `<div><p class='font-bold'>${r.name}</p></div><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold">Accept</button>`;
                     cont.appendChild(div);
-                });
-            });
-
-            db.ref('friends/'+auth.currentUser.uid).on('value', function(snap){
-                var cont = document.getElementById('chats-container'); cont.innerHTML = "";
-                snap.forEach(function(c){
-                    db.ref('users/'+c.key).once('value').then(function(fs){
-                        var f = fs.val();
-                        var div = document.createElement('div');
-                        div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer";
-                        div.onclick = function(){ openChat(f) };
-                        div.innerHTML = "<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>"+f.name[0]+"</div><div><p class='font-bold text-sm'>"+f.name+"</p></div>";
-                        cont.appendChild(div);
-                    });
                 });
             });
         }
@@ -338,39 +276,105 @@
         window.openChat = function(friend){
             selectedFriend = friend;
             document.getElementById('chat-head-name').innerText = friend.name;
+            document.getElementById('chat-head-avatar').innerText = friend.name[0];
             document.getElementById('chat-window').classList.remove('hidden');
-            var cid = auth.currentUser.uid < friend.uid ? auth.currentUser.uid+friend.uid : friend.uid+auth.currentUser.uid;
-            db.ref('messages/'+cid).on('value', function(snap){
+            var chatId = auth.currentUser.uid < friend.uid ? auth.currentUser.uid+friend.uid : friend.uid+auth.currentUser.uid;
+            
+            db.ref('messages/'+chatId).on('value', function(snap){
                 var box = document.getElementById('chat-messages'); box.innerHTML = "";
                 snap.forEach(function(c){
                     var m = c.val(); var msgId = c.key; var isMe = m.sender === auth.currentUser.uid;
+                    
+                    // Mark as read
+                    if(!isMe && !m.read) db.ref('messages/'+chatId+'/'+msgId).update({read: true});
+
                     var div = document.createElement('div'); div.className = "flex "+(isMe?"justify-end":"justify-start");
-                    var content = "<p class='text-sm'>"+(m.text||'')+"</p>";
-                    if(m.type === 'img' || m.type === 'vid'){
-                        var mediaHtml = m.type === 'img' ? "<img src='"+m.data+"'>" : "<video src='"+m.data+"' controls></video>";
-                        content = "<div class='relative'>"+mediaHtml+"<button onclick='toggleMediaMenu(\""+msgId+"\")' class='mt-1 text-slate-400'><i data-lucide='more-horizontal'></i></button><div id='menu-"+msgId+"' class='media-menu'><button onclick='downloadMedia(\""+m.data+"\",\""+m.type+"\")' class='text-xs text-white px-2 py-1'>Download</button></div></div>";
-                    }
-                    div.innerHTML = "<div class='p-3 "+(isMe?"msg-sent":"msg-received")+"'>"+content+"</div>";
+                    var content = `<p class='text-sm'>${m.text || ''}</p>`;
+                    
+                    if(m.type === 'audio') content = `<audio controls class="max-w-full"><source src="${m.data}" type="audio/webm"></audio>`;
+                    if(m.type === 'img') content = `<img src="${m.data}">`;
+                    if(m.type === 'vid') content = `<video src="${m.data}" controls></video>`;
+                    
+                    div.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}'>${content}<p class='text-[8px] opacity-50 text-right mt-1'>${formatTime(m.time)}</p></div>`;
                     box.appendChild(div);
                 });
                 box.scrollTop = box.scrollHeight;
-                if(window.lucide) lucide.createIcons();
             });
+        };
+
+        // --- VOICE RECORDING ---
+        window.toggleVoiceRecord = function() {
+            var btn = document.getElementById('mic-btn');
+            if (!mediaRecorder || mediaRecorder.state === "inactive") {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+                    audioChunks = [];
+                    btn.classList.add('recording');
+                    
+                    mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
+                    mediaRecorder.onstop = function() {
+                        var audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            var base64 = e.target.result;
+                            var chatId = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
+                            db.ref('messages/'+chatId).push({
+                                sender: auth.currentUser.uid,
+                                type: 'audio',
+                                data: base64,
+                                time: Date.now(),
+                                read: false
+                            });
+                        };
+                        reader.readAsDataURL(audioBlob);
+                        btn.classList.remove('recording');
+                    };
+                });
+            } else {
+                mediaRecorder.stop();
+            }
         };
 
         window.sendTextMsg = function(){
             var v = document.getElementById('msg-input').value; if(!v) return;
-            var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, text:v, type:'text'});
+            var chatId = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
+            db.ref('messages/'+chatId).push({
+                sender: auth.currentUser.uid, 
+                text: v, 
+                type: 'text', 
+                time: Date.now(),
+                read: false
+            });
             document.getElementById('msg-input').value = "";
         };
 
-        window.acceptFriend = function(uid){
-            db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true);
-            db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true);
-            db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove();
+        // --- UTILS ---
+        function formatTime(ts) {
+            if(!ts) return "";
+            var d = new Date(ts);
+            return d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
+        }
+
+        window.processMedia = function(file){
+            var reader = new FileReader();
+            reader.onload = function(e){
+                var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
+                db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:file.type.startsWith('image')?'img':'vid', data:e.target.result, time: Date.now(), read: false});
+            };
+            reader.readAsDataURL(file);
         };
 
+        window.switchTab = function(t){
+            document.querySelectorAll('.tab-view').forEach(function(v){v.classList.add('hidden')});
+            document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('nav-active')});
+            document.getElementById('view-'+t).classList.remove('hidden');
+            document.getElementById('nav-'+t).classList.add('nav-active');
+        };
+
+        window.closeChat = function(){document.getElementById('chat-window').classList.add('hidden');};
+        window.openSearch = function(){document.getElementById('search-modal').classList.remove('hidden')};
+        window.closeSearch = function(){document.getElementById('search-modal').classList.add('hidden')};
         window.findUser = function(){
             var u = document.getElementById('search-username-input').value.toLowerCase().trim();
             db.ref('usernames/'+u).once('value').then(function(s){
@@ -381,22 +385,15 @@
                 } else alert("Not found");
             });
         };
-
         window.sendFriendRequest = function(){
             db.ref('requests/'+window.lastFoundUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:myData.name, username:myData.username});
             alert("Sent!"); document.getElementById('search-modal').classList.add('hidden');
         };
-
-        window.switchTab = function(t){
-            document.querySelectorAll('.tab-view').forEach(function(v){v.classList.add('hidden')});
-            document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('nav-active')});
-            document.getElementById('view-'+t).classList.remove('hidden');
-            document.getElementById('nav-'+t).classList.add('nav-active');
+        window.acceptFriend = function(uid){
+            db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true);
+            db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true);
+            db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove();
         };
-
-        window.openSearch = function(){document.getElementById('search-modal').classList.remove('hidden')};
-        window.closeSearch = function(){document.getElementById('search-modal').classList.add('hidden')};
-        window.closeChat = function(){document.getElementById('chat-window').classList.add('hidden')};
 
         window.onload = function(){ if(window.lucide) lucide.createIcons(); };
     </script>
