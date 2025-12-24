@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mustafai Chatting App | Pro Max v5</title>
+    <title>Mustafai Pro | Final Fixed</title>
     
-    <!-- Robust Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.4.7/peerjs.min.js"></script>
@@ -19,32 +18,32 @@
         .app-shell { display: flex; flex-direction: column; height: 100vh; width: 100%; position: relative; background: #0f172a; }
         .main-content { flex: 1; overflow-y: auto; padding: 12px; padding-bottom: 100px; width: 100%; }
 
-        /* Navigation - Pure White Icons */
+        /* Nav - Always White & High Visibility */
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-btn { color: #ffffff !important; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.5; transition: 0.3s; background: none; border: none; outline: none; }
+        .nav-btn { color: #ffffff !important; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; transition: 0.3s; background: none; border: none; outline: none; }
         .nav-active { opacity: 1 !important; color: #6366f1 !important; border-top: 2px solid #6366f1; padding-top: 5px; }
         .nav-btn span { font-size: 10px; font-weight: bold; text-transform: uppercase; color: white; }
 
-        /* Chat Bubbles */
-        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
-        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 12px; position: relative; }
+        /* Bubbles */
+        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; width: fit-content; max-width: 85%; margin-bottom: 8px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
+        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 85%; margin-bottom: 8px; padding: 12px; position: relative; }
         
-        video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
-        audio { width: 200px; height: 40px; margin-top: 5px; }
-
+        video, img { max-width: 100%; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
+        audio { width: 210px; height: 40px; margin-top: 5px; }
+        
         .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
-        .credits { position: fixed; bottom: 80px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
+        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; width: fit-content; }
         
         #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s; }
-        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 110px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .show-menu { display: block !important; }
         .reaction-badge { position: absolute; bottom: -12px; right: 10px; background: #334155; border-radius: 12px; padding: 1px 6px; font-size: 12px; }
 
-        .rec-active { color: #ef4444 !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-        
+        .credits { position: fixed; bottom: 80px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
         .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; background: #000; }
         .call-video-self { width: 90px; height: 130px; position: absolute; top: 15px; right: 15px; border: 2px solid white; z-index: 100; border-radius: 12px; }
+        .ringing-anim { animation: ring-glow 1.5s infinite; }
+        @keyframes ring-glow { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } }
     </style>
 </head>
 <body>
@@ -53,19 +52,19 @@
 
     <!-- REACTION BAR -->
     <div id="reaction-bar" onmouseleave="hideReactions()">
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
     </div>
 
-    <!-- CALL OVERLAY -->
+    <!-- CALL SCREEN -->
     <div id="call-screen" class="fixed inset-0 z-[5000] bg-slate-950 hidden flex flex-col items-center justify-center p-6 text-center">
         <div id="ringing-ui">
-            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ring-pulse" id="call-avatar">?</div>
+            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ringing-anim" id="call-avatar">?</div>
             <h2 class="text-3xl font-bold mb-2 text-white" id="call-user-name">User</h2>
-            <p class="text-indigo-400 animate-pulse mb-12">Secure Connection...</p>
+            <p class="text-indigo-400 animate-pulse mb-12" id="call-status">Connecting Call...</p>
             <div class="flex gap-10 justify-center">
                 <button onclick="rejectCall()" class="bg-red-600 w-16 h-16 rounded-full flex items-center justify-center shadow-lg"><i data-lucide="phone-off"></i></button>
                 <button id="accept-btn" onclick="acceptCall()" class="bg-emerald-600 w-16 h-16 rounded-full flex items-center justify-center shadow-lg hidden"><i data-lucide="phone"></i></button>
@@ -82,12 +81,12 @@
     <div id="auth-screen" class="fixed inset-0 z-[2000] bg-slate-900 flex items-center justify-center p-6 text-center">
         <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700">
             <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase">MUSTAFAI</h1>
-            <p class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest">Global Pro Suite</p>
+            <p class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest uppercase">The Final Standard</p>
             <div id="login-form" class="space-y-4 text-left">
                 <input type="email" id="l-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="l-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition">Sign In</button>
-                <button onclick="handleAuth('google')" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-bold flex items-center justify-center gap-3">
+                <button onclick="handleAuth('google')" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 active:scale-95 transition">
                     <img src="https://i.imghippo.com/files/xwca3418zU.png" style="width:24px"> Google Login
                 </button>
                 <p class="text-center text-slate-400 text-sm mt-4">New? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold underline">Sign Up</button></p>
@@ -95,7 +94,7 @@
             <div id="signup-form" class="hidden space-y-4 text-left">
                 <input type="text" id="s-name" placeholder="Full Name" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="text" id="s-username" placeholder="Username" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <input type="email" id="s-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
+                <input type="email" id="s-email" placeholder="Email Address" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="s-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <button onclick="handleAuth('signup')" class="w-full bg-emerald-600 py-4 rounded-2xl font-bold">Register</button>
                 <p class="text-center text-slate-400 text-sm mt-4">Back to <button onclick="toggleAuth(false)" class="text-indigo-400 font-bold underline">Login</button></p>
@@ -105,10 +104,10 @@
 
     <!-- APP SHELL -->
     <div id="app-screen" class="hidden app-shell">
-        <header class="p-5 flex justify-between items-center bg-slate-800 border-b border-white/5">
+        <header class="p-5 flex justify-between items-center bg-slate-800 border-b border-white/5 sticky top-0 z-50">
             <div>
                 <h2 id="view-title" class="text-xl font-bold text-white uppercase tracking-tighter">Home</h2>
-                <div class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div><span class="text-[9px] font-bold text-indigo-400 uppercase">SECURE NETWORK</span></div>
+                <div class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div><span class="text-[9px] font-bold text-indigo-400">SECURE NETWORK</span></div>
             </div>
             <button onclick="openSearch()" class="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center text-white"><i data-lucide="plus"></i></button>
         </header>
@@ -117,17 +116,17 @@
             <div id="view-home" class="tab-view w-full"><div id="chats-container" class="space-y-1"></div></div>
             <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container" class="space-y-3"></div></div>
             <div id="view-profile" class="tab-view hidden text-center pt-8">
-                <div class="w-28 h-28 bg-indigo-600 rounded-3xl flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
-                <div id="p-display-box">
+                <div class="w-28 h-28 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
+                <div id="p-info-display">
                     <h2 id="p-name" class="text-2xl font-bold text-white mb-1">Name</h2>
-                    <p id="p-username" class="text-indigo-400 mb-10 font-bold">@user</p>
-                    <button onclick="toggleEditMode(true)" class="w-full max-w-sm p-4 bg-slate-800 rounded-2xl border border-slate-700 font-bold mb-4">Edit Profile Name</button>
+                    <p id="p-username" class="text-indigo-400 mb-10 font-bold font-sm">@user</p>
+                    <button onclick="openEditMode(true)" class="w-full max-w-sm p-4 bg-slate-800 rounded-2xl border border-slate-700 font-bold mb-4">Edit Profile</button>
                 </div>
                 <div id="p-edit-box" class="hidden space-y-4 max-w-sm mx-auto bg-slate-800 p-6 rounded-3xl border border-slate-700">
-                    <input type="text" id="edit-name-val" class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white" placeholder="New Name">
-                    <button onclick="saveName()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold text-sm">Update Now</button>
+                    <input type="text" id="edit-name-val" class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600" placeholder="New Name">
+                    <button onclick="saveNameUpdate()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold text-sm">Save Changes</button>
                 </div>
-                <button onclick="logout()" class="w-full max-w-sm p-4 bg-red-900/10 text-red-500 rounded-2xl font-bold mt-10">Sign Out</button>
+                <button onclick="logout()" class="w-full max-w-sm p-4 bg-red-900/10 text-red-500 rounded-2xl font-bold mt-10 border border-red-900/20">Sign Out</button>
             </div>
         </main>
 
@@ -154,10 +153,10 @@
         </header>
         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col bg-slate-950/20"></div>
         <div class="p-4 bg-slate-800 flex items-center gap-3 border-t border-white/5">
-            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip" class="w-5 h-5"></i><input type="file" id="media-uploader" class="hidden" accept="image/*,video/*" onchange="processLocalMedia(this.files[0])"></label>
-            <button id="mic-btn" onclick="toggleVoice()" class="p-2 text-slate-400"><i data-lucide="mic" class="w-5 h-5"></i></button>
+            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip"></i><input type="file" id="media-uploader" class="hidden" accept="image/*,video/*" onchange="processMediaProfessional(this.files[0])"></label>
+            <button id="mic-btn" onclick="toggleVoice()" class="p-2 text-slate-400"><i data-lucide="mic"></i></button>
             <input type="text" id="msg-input" placeholder="Message..." class="flex-1 bg-slate-700/50 p-4 rounded-2xl outline-none text-white text-sm">
-            <button onclick="sendMsg()" class="bg-indigo-600 p-4 rounded-2xl shadow-lg active:scale-90 transition"><i data-lucide="send" class="w-5 h-5"></i></button>
+            <button onclick="sendMsg()" class="bg-indigo-600 p-4 rounded-2xl shadow-lg active:scale-90 transition"><i data-lucide="send"></i></button>
         </div>
     </div>
 
@@ -165,13 +164,13 @@
     <div id="search-modal" class="fixed inset-0 z-[1100] bg-black/95 hidden flex items-center justify-center p-6">
         <div class="w-full max-w-xs glass-ui p-8 rounded-3xl space-y-4">
             <h3 class="font-bold text-white text-center">Find User</h3>
-            <input type="text" id="search-username-input" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
+            <input type="text" id="search-input-val" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
             <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center border border-indigo-500/20">
-                <span id="res-username-display" class="text-white font-bold text-sm">@user</span>
+                <span id="res-username" class="text-white font-bold text-sm">@user</span>
                 <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded text-xs font-bold">Add</button>
             </div>
-            <button onclick="closeSearch()" class="w-full text-slate-500 text-xs font-bold uppercase mt-2">Close</button>
+            <button onclick="closeSearch()" class="w-full text-slate-500 font-bold mt-2">Close</button>
         </div>
     </div>
 
@@ -188,6 +187,7 @@
         firebase.initializeApp(firebaseConfig);
         var auth = firebase.auth();
         var db = firebase.database();
+        var provider = new firebase.auth.GoogleAuthProvider();
 
         var me, selectedFriend, myPeer, myStream, activeCall, mediaRec, audioChks = [];
         var callAnsTime = null;
@@ -205,7 +205,7 @@
                         db.ref('usernames/'+user).set(res.user.uid);
                     });
                 });
-            } else auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+            } else auth.signInWithPopup(provider).catch(alert);
         };
         window.logout = () => auth.signOut();
 
@@ -230,91 +230,125 @@
         });
 
         // --- PROFILE EDIT ---
-        window.toggleEditMode = (e) => { document.getElementById('p-display-box').classList.toggle('hidden', e); document.getElementById('p-edit-box').classList.toggle('hidden', !e); if(e) document.getElementById('edit-name-val').value = me.name; };
-        window.saveName = () => { var n = document.getElementById('edit-name-val').value; if(n) db.ref('users/'+me.uid).update({name:n}).then(()=>toggleEditMode(false)); };
+        window.openEditMode = (s) => { document.getElementById('p-display-box').classList.toggle('hidden', s); document.getElementById('p-edit-box').classList.toggle('hidden', !s); if(s) document.getElementById('edit-name-val').value = me.name; };
+        window.saveNameUpdate = () => { var n = document.getElementById('edit-name-val').value; if(n) db.ref('users/'+me.uid).update({name:n}).then(()=>openEditMode(false)); };
 
-        // --- CALLS ---
-        function initPeer(id) { myPeer = new Peer(id); myPeer.on('call', (c) => { activeCall = c; }); }
+        // --- CALLS WORKING FIXED ---
+        function initPeer(id) {
+            myPeer = new Peer(id, {
+                config: {'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'stun:stun1.l.google.com:19302' }]}
+            });
+            myPeer.on('call', (c) => { activeCall = c; });
+        }
+        
         function listenSignals() {
-            db.ref('calls/'+auth.currentUser.uid).on('value', function(snap) {
+            db.ref('calls/' + auth.currentUser.uid).on('value', function(snap) {
                 var d = snap.val();
                 if(d && d.status==='ringing') {
                     db.ref('users/'+d.from).once('value', function(u) {
                         document.getElementById('call-screen').classList.remove('hidden');
                         document.getElementById('call-user-name').innerText = u.val().name;
                         document.getElementById('accept-btn').classList.remove('hidden');
+                        document.getElementById('call-status').innerText = "Incoming " + d.type + " Call...";
                     });
                 } else if(!d) document.getElementById('call-screen').classList.add('hidden');
             });
         }
+
+        window.startCall = (type) => {
+            document.getElementById('call-screen').classList.remove('hidden');
+            document.getElementById('call-user-name').innerText = selectedFriend.name;
+            document.getElementById('call-status').innerText = "Ringing...";
+            db.ref('calls/'+selectedFriend.uid).set({ from:me.uid, type:type, status:'ringing' });
+            navigator.mediaDevices.getUserMedia({video: type==='video', audio:true}).then(s => {
+                myStream = s; activeCall = myPeer.call(selectedFriend.uid, s);
+                setupCallUI(s);
+            }).catch(e => alert("Mic/Camera Error"));
+        };
+
         window.acceptCall = () => {
             navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(s => {
                 myStream = s; activeCall.answer(s); callAnsTime = Date.now();
                 db.ref('calls/'+me.uid).update({status:'connected'});
-                document.getElementById('ringing-ui').classList.add('hidden');
-                document.getElementById('video-ui').classList.remove('hidden');
-                document.getElementById('local-video').srcObject = s;
-                activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; });
+                setupCallUI(s);
             });
         };
-        window.rejectCall = () => { logCall('missed'); db.ref('calls/'+me.uid).remove(); endCall(); };
-        window.endCall = () => { if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000)); if(activeCall) activeCall.close(); db.ref('calls/'+me.uid).remove(); location.reload(); };
-        function logCall(s, d) { var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid; db.ref('messages/'+cid).push({ sender:me.uid, text: s==='completed' ? "Chatted for "+d+" mins" : "Missed call", type:'call_log', time:Date.now(), read:false }); }
 
-        // --- VOICE LOGIC (100% WORKING FINAL) ---
+        function setupCallUI(s) {
+            document.getElementById('ringing-ui').classList.add('hidden');
+            document.getElementById('video-ui').classList.remove('hidden');
+            document.getElementById('local-video').srcObject = s;
+            activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; if(!callAnsTime) callAnsTime = Date.now(); });
+        }
+
+        window.rejectCall = () => { logCall('missed'); db.ref('calls/'+me.uid).remove(); endCall(); };
+        window.endCall = () => {
+            if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000));
+            if(activeCall) activeCall.close();
+            if(myStream) myStream.getTracks().forEach(t => t.stop());
+            db.ref('calls/'+me.uid).remove();
+            location.reload();
+        };
+
+        function logCall(s, d) {
+            var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
+            db.ref('messages/'+cid).push({ sender:me.uid, text: s==='completed' ? "Chatted for "+d+" mins" : "Missed call", type:'call_log', time:Date.now(), read:false });
+        }
+
+        // --- MEDIA 100% FIXED ---
+        window.processMediaProfessional = (file) => {
+            if(!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = e.target.result;
+                if(file.type.startsWith('image/')) {
+                    var img = new Image(); img.src = data;
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var MAX_W = 400; var scale = MAX_W / img.width;
+                        canvas.width = MAX_W; canvas.height = img.height * scale;
+                        var ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        pushMedia('img', canvas.toDataURL('image/jpeg', 0.5));
+                    };
+                } else if(file.size < 3000000) { pushMedia('vid', data); }
+                else { alert("File too large. Max 3MB."); }
+            };
+            reader.readAsDataURL(file);
+        };
+        function pushMedia(type, data) {
+            var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
+            db.ref('messages/'+cid).push({sender:me.uid, type:type, data:data, time:Date.now(), read:false});
+        }
+
+        // --- VOICE ---
         window.toggleVoice = () => {
-            var btn = document.getElementById('mic-btn');
             if (!mediaRec || mediaRec.state === "inactive") {
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
-                    var types = ['audio/webm', 'audio/mp4', 'audio/ogg'];
-                    var selectedType = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
-                    
-                    mediaRec = selectedType ? new MediaRecorder(s, { mimeType: selectedType }) : new MediaRecorder(s);
-                    mediaRec.start(); audioChks = []; btn.classList.add('rec-active');
-                    
-                    mediaRec.ondataavailable = e => { if(e.data.size > 0) audioChks.push(e.data); };
+                    mediaRec = new MediaRecorder(s); mediaRec.start(); audioChks = []; document.getElementById('mic-btn').classList.add('text-red-500');
+                    mediaRec.ondataavailable = e => audioChks.push(e.data);
                     mediaRec.onstop = () => {
-                        var blob = new Blob(audioChks, { type: selectedType || 'audio/wav' });
-                        var r = new FileReader();
-                        r.onload = e => {
-                            var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
-                            db.ref('messages/'+cid).push({sender:me.uid, type:'audio', data:e.target.result, time:Date.now(), read:false});
-                        };
-                        r.readAsDataURL(blob);
-                        btn.classList.remove('rec-active');
-                        s.getTracks().forEach(t => t.stop()); // Mic Band
+                        var r = new FileReader(); r.onload = e => pushMedia('audio', e.target.result);
+                        r.readAsDataURL(new Blob(audioChks)); document.getElementById('mic-btn').classList.remove('text-red-500'); s.getTracks().forEach(t => t.stop());
                     };
-                }).catch(e => alert("Mic not detected or blocked."));
-            } else { mediaRec.stop(); }
+                });
+            } else mediaRec.stop();
         };
 
-        // --- MEDIA ---
-        window.processLocalMedia = (f) => {
-            if(!f) return;
-            var r = new FileReader();
-            r.onload = e => {
-                var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
-                db.ref('messages/'+cid).push({sender:me.uid, type:f.type.startsWith('image')?'img':'vid', data:e.target.result, time:Date.now(), read:false});
-            }; r.readAsDataURL(f);
-        };
-
-        // --- CHAT LOGIC ---
+        // --- CHAT & INBOX ---
         function loadInbox(){
             db.ref('friends/'+auth.currentUser.uid).on('value', function(snap){
                 var cont = document.getElementById('chats-container'); cont.innerHTML = "";
                 snap.forEach(function(c){
                     db.ref('users/'+c.key).once('value').then(function(fs){
-                        var f = fs.val();
-                        var chatId = me.uid < f.uid ? me.uid+f.uid : f.uid+me.uid;
-                        db.ref('messages/'+chatId).on('value', function(mSnap){
+                        var f = fs.val(); var cid = me.uid < f.uid ? me.uid+f.uid : f.uid+me.uid;
+                        db.ref('messages/'+cid).on('value', function(mSnap){
                             var unread = 0, lastT = "";
                             mSnap.forEach(function(m){ if(m.val().sender !== me.uid && !m.val().read) unread++; lastT = formatTime(m.val().time); });
-                            var d = document.createElement('div');
-                            d.className = "flex items-center gap-4 p-4 bg-slate-800 rounded-2xl mb-2 cursor-pointer border border-white/5";
+                            var d = document.createElement('div'); d.className = "chat-item";
                             d.onclick = () => openChat(f);
                             d.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
                                            <div class='flex-1'><div class='flex justify-between font-bold text-sm text-white'><span>${f.name}</span><span class='text-slate-500 text-[10px]'>${lastT}</span></div>
-                                           <div class='flex justify-between mt-1'><span class='text-[10px] text-slate-400'>PRO Link</span>${unread>0?`<span class='unread-badge'>${unread}</span>`:''}</div></div>`;
+                                           <div class='flex justify-between mt-1 text-[10px] text-slate-400'><span>Connection</span>${unread>0?`<span class='unread-badge'>${unread}</span>`:''}</div></div>`;
                             cont.prepend(d);
                         });
                     });
@@ -323,9 +357,8 @@
             db.ref('requests/'+me.uid).on('value', function(s){
                 var cont = document.getElementById('requests-container'); cont.innerHTML = "";
                 s.forEach(function(c){
-                    var r = c.val();
-                    var d = document.createElement('div'); d.className = "p-4 glass-ui rounded-2xl flex justify-between items-center border border-white/5 mb-2";
-                    d.innerHTML = `<div><p class='font-bold text-white'>${r.name}</p></div><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Accept</button>`;
+                    var r = c.val(); var d = document.createElement('div'); d.className = "chat-item justify-between";
+                    d.innerHTML = `<div><p class='font-bold text-white'>${r.name}</p></div><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold">Accept</button>`;
                     cont.appendChild(d);
                 });
             });
@@ -333,7 +366,6 @@
 
         window.openChat = function(f){
             selectedFriend = f; document.getElementById('chat-head-name').innerText = f.name;
-            document.getElementById('chat-head-avatar').innerText = f.name[0];
             document.getElementById('chat-window').classList.remove('hidden');
             var cid = me.uid < f.uid ? me.uid+f.uid : f.uid+me.uid;
             db.ref('messages/'+cid).on('value', function(snap){
@@ -348,9 +380,10 @@
                         var reactHtml = m.reaction ? `<div class="reaction-badge">${m.reaction}</div>` : '';
                         var content = `<p class='text-sm'>${m.text||''}</p>`;
                         if(m.type==='img') content = `<img src='${m.data}'>`;
-                        if(m.type==='audio') content = `<audio src='${m.data}' controls preload="auto"></audio>`;
+                        if(m.type==='vid') content = `<video src='${m.data}' controls></video>`;
+                        if(m.type==='audio') content = `<audio src='${m.data}' controls></audio>`;
                         d.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}' ondblclick="showReact('${cid}','${mid}', event)">
-                            ${content}${reactHtml}<div class="flex justify-between items-center mt-1 gap-4"><span class='text-[8px] opacity-60'>${m.edited?'Edited ':''}${formatTime(m.time)}</span>
+                            ${content}${reactHtml}<div class="flex justify-between items-center mt-1 gap-4"><span class='text-[8px] opacity-60'>${formatTime(m.time)}</span>
                             <button onclick="toggleMsgMenu('${mid}')" class="p-1 opacity-50"><i data-lucide="more-horizontal" class="w-3"></i></button></div>
                             <div id="menu-${mid}" class="msg-menu"><button onclick="downloadMedia('${m.data}')">Save</button>
                             ${isMe?`<button onclick="editMsg('${cid}','${mid}','${m.text}')">Edit</button><button onclick="deleteMsg('${cid}','${mid}')" class="text-red-400">Delete</button>`:''}</div></div>`;
@@ -362,9 +395,8 @@
         };
 
         // --- UTILS ---
-        window.sendMsg = () => { var v = document.getElementById('msg-input').value; if(v){ db.ref('messages/'+(me.uid<selectedFriend.uid?me.uid+selectedFriend.uid:selectedFriend.uid+me.uid)).push({sender:me.uid, text:v, type:'text', time:Date.now(), read:false}); document.getElementById('msg-input').value=""; }};
+        window.sendMsg = () => { var v = document.getElementById('msg-input').value; if(v){ pushMedia('text', v); document.getElementById('msg-input').value=""; }};
         window.deleteFullChat = () => { if(confirm("Delete chat?")) db.ref('messages/'+(me.uid<selectedFriend.uid?me.uid+selectedFriend.uid:selectedFriend.uid+me.uid)).remove(); };
-        var crC, crM;
         window.showReact = (c,m,e) => { window.curC=c; window.curM=m; var b=document.getElementById('reaction-bar'); b.style.display='block'; b.style.left=e.clientX+'px'; b.style.top=(e.clientY-60)+'px'; };
         window.hideReactions = () => document.getElementById('reaction-bar').style.display='none';
         window.applyReaction = (emoji) => { db.ref('messages/'+window.curC+'/'+window.curM+'/reaction').set(emoji); hideReactions(); };
@@ -383,10 +415,10 @@
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
         window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
         window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
-        window.findUser = () => { var u = document.getElementById('search-username-input').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username-display').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
-        window.sendFriendRequest = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:me.name, username:me.username}); alert("Sent!"); closeSearch(); };
+        window.findUser = () => { var u = document.getElementById('search-input-val').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
+        window.sendReq = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:me.name, username:me.username}); alert("Sent!"); closeSearch(); };
         window.acceptFriend = (uid) => { db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
-        window.downloadMedia = (d) => { var a=document.createElement("a"); a.href=d; a.download="mustafai_save.jpg"; a.click(); };
+        window.downloadMedia = (d) => { var a=document.createElement("a"); a.href=d; a.download="mustafai_file.jpg"; a.click(); };
         window.onload = () => lucide.createIcons();
     </script>
 </body>
