@@ -16,29 +16,25 @@
     <style>
         body { font-family: sans-serif; background-color: #0f172a; color: #f1f5f9; overflow: hidden; margin: 0; width: 100vw; height: 100vh; }
         
-        /* Responsive Framework */
         .app-shell { display: flex; flex-direction: column; height: 100vh; width: 100%; position: relative; }
         .main-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
         .hidden { display: none !important; }
 
-        /* Navigation - Always Visible & White */
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
         .nav-btn { color: #ffffff !important; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; transition: 0.3s; }
         .nav-active { opacity: 1 !important; color: #6366f1 !important; border-top: 3px solid #6366f1; padding-top: 5px; }
         .nav-btn span { font-size: 10px; font-weight: bold; text-transform: uppercase; }
 
-        /* Chat Bubbles */
         .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; }
         
-        /* Media Elements */
         video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; }
         audio { width: 200px; height: 35px; margin-top: 5px; }
         
         .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
         .credits { position: fixed; bottom: 80px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
         
-        #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s; }
         .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; }
         .show-menu { display: block !important; }
     </style>
@@ -51,7 +47,7 @@
     <div id="auth-screen" class="fixed inset-0 z-[2000] bg-slate-900 flex items-center justify-center p-6">
         <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700 text-center">
             <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase">MUSTAFAI</h1>
-            <p class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest">The Ultimate Chat App</p>
+            <p class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest text-center">The Ultimate Chat App</p>
             
             <div id="login-form" class="space-y-4 text-left">
                 <input type="email" id="l-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
@@ -76,8 +72,6 @@
 
     <!-- --- APP SHELL --- -->
     <div id="app-screen" class="hidden app-shell">
-        
-        <!-- Header -->
         <header class="p-5 flex justify-between items-center bg-slate-800 border-b border-white/5">
             <div>
                 <h2 id="view-title" class="text-xl font-bold text-white uppercase tracking-tighter">Inbox</h2>
@@ -86,55 +80,31 @@
             <button onclick="openSearch()" class="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center text-white"><i data-lucide="plus"></i></button>
         </header>
 
-        <!-- Dynamic Content Area -->
         <main class="main-content">
-            <!-- Home Inbox -->
-            <div id="view-home" class="tab-view">
-                <div id="chats-container" class="space-y-1"></div>
-            </div>
-
-            <!-- Friend Requests -->
-            <div id="view-requests" class="tab-view hidden pt-4">
-                <h3 class="text-xs text-slate-500 font-bold mb-4">PENDING REQUESTS</h3>
-                <div id="requests-container" class="space-y-3"></div>
-            </div>
-
-            <!-- Profile & Edit -->
+            <div id="view-home" class="tab-view"><div id="chats-container" class="space-y-1"></div></div>
+            <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container" class="space-y-3"></div></div>
             <div id="view-profile" class="tab-view hidden text-center pt-8">
                 <div class="w-28 h-28 bg-indigo-600 rounded-[2.5rem] flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
-                
                 <div id="profile-info-display">
                     <h2 id="p-name" class="text-2xl font-bold text-white mb-1">Name</h2>
                     <p id="p-username" class="text-indigo-400 mb-10 font-bold">@user</p>
                     <button onclick="openProfileEdit(true)" class="w-full max-w-sm p-4 bg-slate-800 rounded-2xl border border-slate-700 font-bold mb-3">Edit Profile Name</button>
                 </div>
-
                 <div id="profile-info-edit" class="hidden space-y-4 max-w-sm mx-auto bg-slate-800 p-6 rounded-3xl border border-slate-700">
                     <input type="text" id="new-name-val" class="w-full p-4 bg-slate-700 rounded-2xl outline-none border border-slate-600" placeholder="New Display Name">
                     <div class="flex gap-2">
                         <button onclick="updateName()" class="flex-1 bg-indigo-600 py-3 rounded-xl font-bold text-sm">Save</button>
-                        <button onclick="openProfileEdit(false)" class="flex-1 bg-slate-700 py-3 rounded-xl font-bold text-sm">Cancel</button>
+                        <button onclick="openProfileEdit(false)" class="flex-1 bg-slate-700 py-3 rounded-xl font-bold text-sm text-slate-400">Cancel</button>
                     </div>
                 </div>
-
                 <button onclick="logout()" class="w-full max-w-sm p-4 bg-red-900/10 text-red-500 rounded-2xl font-bold mt-4 border border-red-900/20">Sign Out</button>
             </div>
         </main>
 
-        <!-- Navigation Bar (Fixed White Icons) -->
         <nav class="nav-bar">
-            <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active">
-                <i data-lucide="message-circle"></i>
-                <span>Home</span>
-            </button>
-            <button onclick="switchTab('requests')" id="nav-requests" class="nav-btn">
-                <i data-lucide="bell"></i>
-                <span>Inbox</span>
-            </button>
-            <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn">
-                <i data-lucide="user"></i>
-                <span>Profile</span>
-            </button>
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active"><i data-lucide="message-circle"></i><span>Home</span></button>
+            <button onclick="switchTab('requests')" id="nav-requests" class="nav-btn"><i data-lucide="bell"></i><span>Inbox</span></button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn"><i data-lucide="user"></i><span>Profile</span></button>
         </nav>
     </div>
 
@@ -146,9 +116,10 @@
                 <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold text-sm" id="chat-head-avatar">?</div>
                 <h4 id="chat-head-name" class="font-bold text-sm">Friend</h4>
             </div>
-            <div class="flex gap-4 px-2">
-                <button onclick="startCall('voice')" class="text-slate-400"><i data-lucide="phone" class="w-5 h-5"></i></button>
-                <button onclick="startCall('video')" class="text-slate-400"><i data-lucide="video" class="w-5 h-5"></i></button>
+            <div class="flex gap-3 px-2">
+                <button onclick="confirmDeleteChat()" class="text-red-400 p-2"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                <button onclick="startCall('voice')" class="text-slate-400 p-2"><i data-lucide="phone" class="w-5 h-5"></i></button>
+                <button onclick="startCall('video')" class="text-slate-400 p-2"><i data-lucide="video" class="w-5 h-5"></i></button>
             </div>
         </header>
         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col bg-slate-950/20"></div>
@@ -213,10 +184,10 @@
         firebase.initializeApp(firebaseConfig);
         var auth = firebase.auth();
         var db = firebase.database();
+        var provider = new firebase.auth.GoogleAuthProvider();
 
         var me, selectedFriend, myPeer, myStream, activeCall, mediaRec, audioChks = [];
 
-        // --- AUTH ---
         window.toggleAuth = (s) => { document.getElementById('login-form').classList.toggle('hidden', s); document.getElementById('signup-form').classList.toggle('hidden', !s); };
         window.handleAuth = (m) => {
             if(m==='login') auth.signInWithEmailAndPassword(document.getElementById('l-email').value, document.getElementById('l-password').value).catch(alert);
@@ -229,7 +200,7 @@
                         db.ref('usernames/'+user).set(res.user.uid);
                     });
                 });
-            } else auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+            } else auth.signInWithPopup(provider);
         };
         window.logout = () => auth.signOut();
 
@@ -253,7 +224,7 @@
             if(window.lucide) lucide.createIcons();
         });
 
-        // --- PROFILE EDIT WORKING ---
+        // --- PROFILE EDIT ---
         window.openProfileEdit = (s) => {
             document.getElementById('profile-info-display').classList.toggle('hidden', s);
             document.getElementById('profile-info-edit').classList.toggle('hidden', !s);
@@ -264,7 +235,18 @@
             if(n) db.ref('users/'+auth.currentUser.uid).update({name:n}).then(()=>openProfileEdit(false));
         };
 
-        // --- CALLS & SIGNALS ---
+        // --- DELETE CHAT ---
+        window.confirmDeleteChat = () => {
+            if(confirm("Are you sure you want to delete all messages in this chat?")) {
+                var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid + selectedFriend.uid : selectedFriend.uid + auth.currentUser.uid;
+                db.ref('messages/' + cid).remove().then(() => {
+                    alert("Chat deleted successfully.");
+                    closeChat();
+                });
+            }
+        };
+
+        // --- CALLS ---
         function initPeer(id) { myPeer = new Peer(id); myPeer.on('call', (c) => { activeCall = c; }); }
         function listenSignals() {
             db.ref('calls/' + auth.currentUser.uid).on('value', function(snap) {
@@ -290,7 +272,7 @@
         window.rejectCall = () => db.ref('calls/'+auth.currentUser.uid).remove();
         window.endCall = () => { if(activeCall) activeCall.close(); db.ref('calls/'+auth.currentUser.uid).remove(); location.reload(); };
 
-        // --- CHAT & VOICE ---
+        // --- CHAT ---
         function loadInbox(){
             db.ref('friends/'+auth.currentUser.uid).on('value', function(snap){
                 var cont = document.getElementById('chats-container'); cont.innerHTML = "";
@@ -305,20 +287,10 @@
                             d.onclick = () => openChat(f);
                             d.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
                                            <div class='flex-1'><div class='flex justify-between font-bold text-sm text-white'><span>${f.name}</span><span class='text-slate-500 text-[10px]'>${lastT}</span></div>
-                                           <div class='flex justify-between mt-1 text-[10px] text-slate-400'><span>Professional</span>${unread>0?`<span class='unread-badge'>${unread}</span>`:''}</div></div>`;
+                                           <div class='flex justify-between mt-1'><span class='text-[10px] text-slate-400'>Professional</span>${unread>0?`<span class='unread-badge'>${unread}</span>`:''}</div></div>`;
                             cont.prepend(d);
                         });
                     });
-                });
-            });
-            db.ref('requests/'+auth.currentUser.uid).on('value', function(s){
-                var cont = document.getElementById('requests-container'); cont.innerHTML = "";
-                s.forEach(function(c){
-                    var r = c.val();
-                    var d = document.createElement('div');
-                    d.className = "p-4 glass-ui rounded-2xl flex justify-between items-center mb-2";
-                    d.innerHTML = `<span>${r.name}</span><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold">Accept</button>`;
-                    cont.appendChild(d);
                 });
             });
         }
@@ -335,11 +307,10 @@
                     var m = c.val(), mid = c.key, isMe = m.sender === auth.currentUser.uid;
                     if(!isMe && !m.read) db.ref('messages/'+cid+'/'+mid).update({read:true});
                     var d = document.createElement('div'); d.className = "flex "+(isMe?"justify-end":"justify-start");
-                    var reactHtml = m.reaction ? `<div class="reaction-badge">${m.reaction}</div>` : '';
                     var content = `<p class='text-sm'>${m.text||''}</p>`;
                     if(m.type==='img') content = `<img src='${m.data}'>`;
                     if(m.type==='audio') content = `<audio src='${m.data}' controls></audio>`;
-                    d.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}' ondblclick="showEmojiPicker('${cid}','${mid}', event)">${content}${reactHtml}</div>`;
+                    d.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}' ondblclick="showEmojiPicker('${cid}','mid', event)">${content}</div>`;
                     box.appendChild(d);
                 });
                 box.scrollTop = box.scrollHeight;
@@ -347,34 +318,15 @@
         };
 
         // --- HELPERS ---
-        var curC, curM;
-        window.showEmojiPicker = (cid, mid, e) => { curC=cid; curM=mid; var b=document.getElementById('reaction-bar'); b.style.display='block'; b.style.left=e.clientX+'px'; b.style.top=(e.clientY-60)+'px'; };
-        window.hideReactions = () => document.getElementById('reaction-bar').style.display='none';
-        window.applyReaction = (emoji) => { db.ref('messages/'+curC+'/'+curM+'/reaction').set(emoji); hideReactions(); };
-        window.toggleVoice = () => {
-            var btn = document.getElementById('mic-btn');
-            if (!mediaRec || mediaRec.state === "inactive") {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
-                    mediaRec = new MediaRecorder(s); mediaRec.start(); audioChks = []; btn.classList.add('text-red-500');
-                    mediaRec.ondataavailable = e => audioChks.push(e.data);
-                    mediaRec.onstop = () => {
-                        var r = new FileReader(); r.onload = e => db.ref('messages/'+(auth.currentUser.uid<selectedFriend.uid?auth.currentUser.uid+selectedFriend.uid:selectedFriend.uid+auth.currentUser.uid)).push({sender:auth.currentUser.uid, type:'audio', data:e.target.result, time:Date.now(), read:false});
-                        r.readAsDataURL(new Blob(audioChks)); btn.classList.remove('text-red-500'); s.getTracks().forEach(t => t.stop());
-                    };
-                });
-            } else mediaRec.stop();
-        };
-        window.processMedia = (f) => { var r = new FileReader(); r.onload = e => db.ref('messages/'+(auth.currentUser.uid<selectedFriend.uid?auth.currentUser.uid+selectedFriend.uid:selectedFriend.uid+auth.currentUser.uid)).push({sender:auth.currentUser.uid, type:'img', data:e.target.result, time:Date.now(), read:false}); r.readAsDataURL(f); };
-        window.sendMsg = () => { var v = document.getElementById('msg-input').value; if(v){ db.ref('messages/'+(auth.currentUser.uid<selectedFriend.uid?auth.currentUser.uid+selectedFriend.uid:selectedFriend.uid+auth.currentUser.uid)).push({sender:auth.currentUser.uid, text:v, type:'text', time:Date.now(), read:false}); document.getElementById('msg-input').value=""; }};
         function formatTime(ts){ if(!ts) return ""; var d = new Date(ts); return d.getHours()+":"+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
-        window.switchTab = (t) => { document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active')); document.getElementById('view-'+t).classList.remove('hidden'); document.getElementById('nav-'+t).classList.add('nav-active'); document.getElementById('view-title').innerText = t.toUpperCase(); };
+        window.switchTab = (t) => { document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active')); document.getElementById('view-'+t).classList.remove('hidden'); document.getElementById('nav-'+t).classList.add('nav-active'); document.getElementById('view-title').innerText = t.toUpperCase(); lucide.createIcons(); };
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
         window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
         window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
         window.findUser = () => { var u = document.getElementById('search-input-val').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username').innerText = '@'+u; document.getElementById('search-result').classList.remove('hidden'); } else alert("No user"); }); };
         window.sendFriendRequest = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:me.name, username:me.username}); alert("Sent!"); closeSearch(); };
         window.acceptFriend = (uid) => { db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
-
+        window.sendMsg = () => { var v = document.getElementById('msg-input').value; if(v){ db.ref('messages/'+(auth.currentUser.uid<selectedFriend.uid?auth.currentUser.uid+selectedFriend.uid:selectedFriend.uid+auth.currentUser.uid)).push({sender:auth.currentUser.uid, text:v, type:'text', time:Date.now(), read:false}); document.getElementById('msg-input').value=""; }};
         window.onload = () => lucide.createIcons();
     </script>
 </body>
