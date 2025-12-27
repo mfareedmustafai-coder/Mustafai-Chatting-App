@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mustafai Chatting App | Ultra Pro</title>
+    <title>Mustafai Chatting App | Final Pro Max</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,29 +13,37 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        body { font-family: sans-serif; background-color: #0f172a; color: #f1f5f9; overflow: hidden; margin: 0; }
-        .glass-ui { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
-        .nav-active { color: #6366f1; border-bottom: 3px solid #6366f1; }
-        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; position: relative; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 4px; padding: 10px; }
-        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); position: relative; width: fit-content; max-width: 80%; margin-bottom: 4px; padding: 10px; }
-        video, img { max-width: 240px; max-height: 320px; border-radius: 12px; object-fit: cover; display: block; margin-top: 5px; }
-        audio { width: 200px; height: 40px; margin-top: 5px; }
-        #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s ease; }
-        @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .emoji-btn { font-size: 24px; padding: 5px; cursor: pointer; transition: 0.2s; }
-        .reaction-badge { position: absolute; bottom: -12px; right: 10px; background: #334155; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1px 6px; font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-        .msg-menu { position: absolute; bottom: -50px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 6px; display: none; z-index: 100; min-width: 120px; }
-        .show-menu { display: block !important; }
-        .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
-        .recording-active { color: #ef4444 !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        body { font-family: sans-serif; background-color: #0f172a; color: #f1f5f9; overflow: hidden; margin: 0; width: 100vw; height: 100vh; }
+        .hidden { display: none !important; }
+        .app-shell { display: flex; flex-direction: column; height: 100vh; width: 100%; position: relative; background: #0f172a; }
+        .main-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; width: 100%; }
+
+        /* Navigation Icons - Pure White */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-btn { color: #ffffff !important; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.5; transition: 0.3s; background: none; border: none; outline: none; }
+        .nav-active { opacity: 1 !important; color: #6366f1 !important; border-top: 2px solid #6366f1; padding-top: 5px; }
+        .nav-btn span { font-size: 10px; font-weight: bold; text-transform: uppercase; color: white; }
+
+        /* Chat Bubbles */
+        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative; }
+        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; position: relative; }
         
-        /* New Calling UI Fixes */
+        video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; background: #000; object-fit: contain; }
+        audio { width: 200px; height: 38px; margin-top: 5px; }
+        
+        .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
+        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; }
+        
+        #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s; }
+        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .show-menu { display: block !important; }
+        .reaction-badge { position: absolute; bottom: -12px; right: 10px; background: #334155; border-radius: 12px; padding: 1px 6px; font-size: 12px; }
+
+        .credits { position: fixed; bottom: 80px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
         .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; background: #000; }
-        .call-video-self { width: 100px; height: 140px; position: absolute; top: 10px; right: 10px; border: 2px solid white; z-index: 5100; border-radius: 10px; }
-        .ring-anim { animation: ring 1.5s infinite; }
-        @keyframes ring { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
-        .credits { position: fixed; bottom: 5px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
+        .call-video-self { width: 95px; height: 135px; position: absolute; top: 15px; right: 15px; border: 2px solid white; z-index: 100; border-radius: 12px; }
+        .ringing { animation: ring-pulse 1.5s infinite; }
+        @keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } }
     </style>
 </head>
 <body>
@@ -44,119 +52,108 @@
 
     <!-- REACTION BAR -->
     <div id="reaction-bar" onmouseleave="hideReactions()">
-        <span class="emoji-btn" onclick="applyReaction('❤️')">❤️</span>
-        <span class="emoji-btn" onclick="applyReaction('😂')">😂</span>
-        <span class="emoji-btn" onclick="applyReaction('👍')">👍</span>
-        <span class="emoji-btn" onclick="applyReaction('😮')">😮</span>
-        <span class="emoji-btn" onclick="applyReaction('😢')">😢</span>
-        <span class="emoji-btn" onclick="applyReaction('🙏')">🙏</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
     </div>
 
-    <!-- CALL SCREEN OVERLAY -->
+    <!-- CALL OVERLAY -->
     <div id="call-screen" class="fixed inset-0 z-[5000] bg-slate-950 hidden flex flex-col items-center justify-center p-6 text-center">
         <div id="ringing-ui">
-            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ring-anim" id="call-avatar">?</div>
+            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ringing" id="call-avatar">?</div>
             <h2 class="text-3xl font-bold mb-2 text-white" id="call-user-name">User</h2>
-            <p class="text-indigo-400 animate-pulse mb-12" id="call-status">Incoming Call...</p>
+            <p class="text-indigo-400 animate-pulse mb-12" id="call-status-label">Incoming Call...</p>
             <div class="flex gap-10 justify-center">
-                <button onclick="rejectCall()" class="bg-red-600 w-16 h-16 rounded-full flex items-center justify-center shadow-lg"><i data-lucide="phone-off"></i></button>
-                <button id="accept-btn" onclick="answerCall()" class="bg-emerald-600 w-16 h-16 rounded-full flex items-center justify-center shadow-lg hidden"><i data-lucide="phone"></i></button>
+                <button onclick="handleRejectCall()" class="bg-red-600 w-16 h-16 rounded-full flex items-center justify-center shadow-lg"><i data-lucide="phone-off"></i></button>
+                <button id="accept-btn" onclick="handleAcceptCall()" class="bg-emerald-600 w-16 h-16 rounded-full flex items-center justify-center shadow-lg hidden"><i data-lucide="phone"></i></button>
             </div>
         </div>
         <div id="video-ui" class="absolute inset-0 hidden">
             <video id="remote-video" class="call-video-full" autoplay playsinline></video>
             <video id="local-video" class="call-video-self" autoplay playsinline muted></video>
-            <button onclick="endCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
+            <button onclick="handleEndCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
         </div>
     </div>
 
     <!-- AUTH SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-[1000] bg-slate-900 flex items-center justify-center p-6 text-center">
+    <div id="auth-screen" class="fixed inset-0 z-[2000] bg-slate-900 flex items-center justify-center p-6 text-center">
         <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700">
             <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase">MUSTAFAI</h1>
             <p class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest text-center">Professional Suite</p>
             <div id="login-form" class="space-y-4 text-left">
-                <input type="email" id="l-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
+                <input type="email" id="l-email" placeholder="Email Address" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="l-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
-                <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition">Sign In</button>
+                <button onclick="handleAuth('login')" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold active:scale-95 transition">Sign In</button>
                 <button onclick="handleAuth('google')" class="w-full bg-white text-slate-900 py-4 rounded-2xl font-bold flex items-center justify-center gap-3">
                     <img src="https://i.imghippo.com/files/xwca3418zU.png" style="width:24px"> Google Login
                 </button>
-                <p class="text-center text-slate-400 text-sm mt-4">New Account? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold underline">Sign Up</button></p>
+                <p class="text-center text-slate-400 text-sm mt-4">New? <button onclick="toggleAuth(true)" class="text-indigo-400 font-bold underline">Sign Up</button></p>
             </div>
-            <div id="signup-form" class="hidden space-y-4 text-left">
+            <div id="signup-form" class="hidden space-y-4">
                 <input type="text" id="s-name" placeholder="Full Name" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="text" id="s-username" placeholder="Username" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="email" id="s-email" placeholder="Email" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <input type="password" id="s-password" placeholder="Password" class="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-2xl outline-none text-white">
                 <button onclick="handleAuth('signup')" class="w-full bg-emerald-600 py-4 rounded-2xl font-bold">Register</button>
-                <p class="text-center text-slate-400 text-sm mt-4">Back to <button onclick="toggleAuth(false)" class="text-indigo-400 font-bold underline">Login</button></p>
+                <p class="text-center text-slate-400 text-sm mt-4">Joined already? <button onclick="toggleAuth(false)" class="text-indigo-400 font-bold underline">Login</button></p>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP SCREEN -->
-    <div id="app-screen" class="hidden h-screen max-w-md mx-auto flex flex-col relative bg-slate-900 border-x border-white/5 shadow-2xl">
-        <header class="p-5 flex justify-between items-center bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+    <!-- APP SHELL -->
+    <div id="app-screen" class="hidden app-shell">
+        <header class="p-5 flex justify-between items-center bg-slate-800 border-b border-white/5">
             <div>
-                <h2 id="view-title" class="text-xl font-bold text-white">Inbox</h2>
-                <span class="text-[9px] text-indigo-400 font-bold uppercase tracking-widest tracking-widest">Secure Network</span>
+                <h2 id="view-title" class="text-xl font-bold text-white uppercase tracking-tighter">Home</h2>
+                <div class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div><span class="text-[9px] font-bold text-indigo-400">SECURE NETWORK</span></div>
             </div>
-            <button onclick="openSearch()" class="w-10 h-10 glass-ui rounded-xl flex items-center justify-center text-indigo-400"><i data-lucide="user-plus" class="w-5 h-5"></i></button>
+            <button onclick="openSearch()" class="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center text-white"><i data-lucide="plus"></i></button>
         </header>
 
-        <main class="flex-1 overflow-y-auto px-4 pb-28">
-            <div id="view-home" class="tab-view space-y-2"><div id="chats-container"></div></div>
-            <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container"></div></div>
-            <div id="view-profile" class="tab-view hidden py-8 text-center">
-                <div class="w-24 h-24 bg-indigo-600 rounded-[2rem] flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
-                <h2 id="p-name" class="text-2xl font-bold text-white">Name</h2>
-                <p id="p-username" class="text-indigo-400 mb-8 font-bold text-sm">@user</p>
-                <button onclick="toggleEditProfile(true)" class="w-full p-4 bg-slate-800 rounded-2xl border border-slate-700 mb-4 font-bold">Edit Profile</button>
-                <button onclick="logout()" class="w-full p-4 bg-red-500/10 text-red-500 font-bold rounded-2xl border border-red-500/20">Sign Out</button>
+        <main class="main-content">
+            <div id="view-home" class="tab-view w-full"><div id="chats-container" class="space-y-1"></div></div>
+            <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container" class="space-y-3"></div></div>
+            
+            <div id="view-profile" class="tab-view hidden text-center pt-8">
+                <div class="w-28 h-28 bg-indigo-600 rounded-3xl flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
+                <div id="p-display-box">
+                    <h2 id="p-name" class="text-2xl font-bold text-white mb-1">Name</h2>
+                    <p id="p-username" class="text-indigo-400 mb-10 font-bold font-sm">@user</p>
+                    <button onclick="toggleEditProfile()" class="w-full max-w-sm p-4 bg-slate-800 rounded-2xl border border-slate-700 font-bold mb-4">Edit Profile</button>
+                </div>
+                <button onclick="logout()" class="w-full max-w-sm p-4 bg-red-900/10 text-red-500 rounded-2xl font-bold mt-10">Sign Out</button>
             </div>
         </main>
 
-        <nav class="absolute bottom-0 left-0 right-0 p-5 glass-ui border-t border-white/5 flex justify-around items-center z-50">
-            <button onclick="switchTab('home')" id="nav-home" class="nav-active"><i data-lucide="message-square"></i></button>
-            <button onclick="switchTab('requests')" id="nav-requests" class="text-slate-500"><i data-lucide="bell"></i></button>
-            <button onclick="switchTab('profile')" id="nav-profile" class="text-slate-500"><i data-lucide="user"></i></button>
+        <nav class="nav-bar">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active"><i data-lucide="message-square"></i><span>Home</span></button>
+            <button onclick="switchTab('requests')" id="nav-requests" class="nav-btn"><i data-lucide="bell"></i><span>Inbox</span></button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn"><i data-lucide="user"></i><span>Profile</span></button>
         </nav>
     </div>
 
-    <!-- CHAT WINDOW -->
-    <div id="chat-window" class="fixed inset-0 z-[600] bg-slate-900 hidden flex flex-col">
-        <header class="p-4 bg-slate-800 flex items-center justify-between border-b border-white/5">
+    <!-- CHAT OVERLAY -->
+    <div id="chat-window" class="fixed inset-0 z-[1500] bg-slate-900 hidden flex flex-col">
+        <header class="p-4 bg-slate-800 flex items-center justify-between border-b border-white/5 shadow-lg">
             <div class="flex items-center gap-3" onclick="closeChat()">
-                <button class="p-2"><i data-lucide="chevron-left"></i></button>
-                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold text-sm" id="chat-head-avatar">?</div>
+                <button class="p-1 text-white"><i data-lucide="chevron-left"></i></button>
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center font-bold text-sm text-white" id="chat-head-avatar">?</div>
                 <h4 id="chat-head-name" class="font-bold text-sm text-white">Friend</h4>
             </div>
-            <div class="flex gap-4 px-2">
-                <button onclick="startCall('voice')" class="text-slate-400"><i data-lucide="phone"></i></button>
-                <button onclick="startCall('video')" class="text-slate-400"><i data-lucide="video"></i></button>
+            <div class="flex gap-3 px-2">
+                <button onclick="deleteFullChat()" class="text-red-400 p-2"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                <button onclick="startCall('voice')" class="text-slate-400 p-2"><i data-lucide="phone" class="w-5 h-5"></i></button>
+                <button onclick="startCall('video')" class="text-slate-400 p-2"><i data-lucide="video" class="w-5 h-5"></i></button>
             </div>
         </header>
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-6 bg-slate-950/20"></div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col bg-slate-950/20"></div>
         <div class="p-4 bg-slate-800 flex items-center gap-3 border-t border-white/5">
-            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip"></i><input type="file" id="media-uploader" class="hidden" accept="image/*,video/*" onchange="processMedia(this.files[0])"></label>
+            <label class="p-2 cursor-pointer text-slate-400"><i data-lucide="paperclip"></i><input type="file" id="media-uploader" class="hidden" accept="image/*,video/*" onchange="processMediaAuto(this.files[0])"></label>
             <button id="mic-btn" onclick="toggleVoiceRecord()" class="p-2 text-slate-400"><i data-lucide="mic"></i></button>
-            <input type="text" id="msg-input" placeholder="Type message..." class="flex-1 bg-slate-700/50 p-4 rounded-2xl outline-none text-sm text-white">
-            <button onclick="sendTextMsg()" class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg"><i data-lucide="send"></i></button>
-        </div>
-    </div>
-
-    <!-- SEARCH -->
-    <div id="search-modal" class="fixed inset-0 z-[800] bg-slate-950/90 hidden flex items-center justify-center p-6">
-        <div class="w-full max-w-xs glass-ui p-8 rounded-[2rem] space-y-4 text-center">
-            <h3 class="font-bold text-lg text-white">Find Contact</h3>
-            <input type="text" id="search-username-input" placeholder="Username..." class="w-full p-4 bg-slate-700/50 rounded-xl outline-none border border-slate-600 text-sm">
-            <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
-            <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center">
-                <span id="res-username-display" class="font-bold text-sm text-white">@user</span>
-                <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded-lg text-xs font-bold">Add</button>
-            </div>
-            <button onclick="closeSearch()" class="w-full text-slate-500 font-bold text-sm">Close</button>
+            <input type="text" id="msg-input" placeholder="Message..." class="flex-1 bg-slate-700/50 p-4 rounded-2xl outline-none text-white text-sm">
+            <button onclick="sendTextMsg()" class="bg-indigo-600 p-4 rounded-2xl shadow-lg active:scale-90 transition"><i data-lucide="send"></i></button>
         </div>
     </div>
 
@@ -175,35 +172,36 @@
         var db = firebase.database();
         var provider = new firebase.auth.GoogleAuthProvider();
 
-        var myData, selectedFriend, myPeer, myStream, activeCall, mediaRecorder, audioChunks = [], currentMsgReactId = null, currentChatReactId = null;
+        var myData, selectedFriend, myPeer, myStream, activeCall, mediaRecorder, audioChunks = [];
+        var callAnsTime = null;
 
         // --- AUTH ---
-        window.toggleAuth = function(s) { document.getElementById('login-form').classList.toggle('hidden', s); document.getElementById('signup-form').classList.toggle('hidden', !s); };
-        window.handleAuth = function(m) {
+        window.toggleAuth = (s) => { document.getElementById('login-form').classList.toggle('hidden', s); document.getElementById('signup-form').classList.toggle('hidden', !s); };
+        window.handleAuth = (m) => {
             if(m==='login') auth.signInWithEmailAndPassword(document.getElementById('l-email').value, document.getElementById('l-password').value).catch(alert);
             else if(m==='signup') {
                 var user = document.getElementById('s-username').value.toLowerCase().trim();
                 db.ref('usernames/'+user).once('value', function(s){
                     if(s.exists()) return alert("Taken!");
-                    auth.createUserWithEmailAndPassword(document.getElementById('s-email').value, document.getElementById('s-password').value).then(function(res){
+                    auth.createUserWithEmailAndPassword(document.getElementById('s-email').value, document.getElementById('s-password').value).then(res => {
                         db.ref('users/'+res.user.uid).set({uid:res.user.uid, name:document.getElementById('s-name').value, username:user});
                         db.ref('usernames/'+user).set(res.user.uid);
                     });
                 });
             } else auth.signInWithPopup(provider);
         };
-        window.logout = function() { auth.signOut(); };
+        window.logout = () => auth.signOut();
 
         auth.onAuthStateChanged(function(u){
             if(u){
                 db.ref('users/'+u.uid).on('value', function(s){
-                    myData = s.val();
+                    myData = s.val(); if(!myData) return;
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('app-screen').classList.remove('hidden');
                     document.getElementById('p-name').innerText = myData.name;
-                    document.getElementById('p-username').innerText = '@' + myData.username;
+                    document.getElementById('p-username').innerText = '@'+myData.username;
                     document.getElementById('p-avatar').innerText = myData.name[0];
-                    if(!myPeer) initPeerSystem(u.uid);
+                    if(!myPeer) initPeer(u.uid);
                     listenSignals();
                     loadInbox();
                 });
@@ -214,246 +212,163 @@
             if(window.lucide) lucide.createIcons();
         });
 
-        // --- REAL CALL SYSTEM ---
-        function initPeerSystem(uid) {
-            myPeer = new Peer(uid, {
-                config: {'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'stun:stun1.l.google.com:19302' }]}
-            });
-            myPeer.on('call', function(incoming) { activeCall = incoming; });
-        }
+        // --- PROFILE EDIT ---
+        window.toggleEditProfile = () => { var n=prompt("Enter New Name:", myData.name); if(n) db.ref('users/'+myData.uid).update({name:n}); };
 
+        // --- CALLS WORKING ---
+        function initPeer(id) { myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] } }); myPeer.on('call', c => { activeCall = c; }); }
         function listenSignals() {
-            db.ref('calls/' + auth.currentUser.uid).on('value', function(snap) {
-                var callData = snap.val();
-                if(callData && callData.status === 'ringing') {
-                    db.ref('users/' + callData.from).once('value', function(uSnap) {
+            db.ref('calls/'+auth.currentUser.uid).on('value', snap => {
+                var d = snap.val();
+                if(d && d.status==='ringing') {
+                    db.ref('users/'+d.from).once('value', u => {
                         document.getElementById('call-screen').classList.remove('hidden');
-                        document.getElementById('call-user-name').innerText = uSnap.val().name;
+                        document.getElementById('call-user-name').innerText = u.val().name;
                         document.getElementById('accept-btn').classList.remove('hidden');
-                        document.getElementById('call-status').innerText = "Incoming " + callData.type + " Call...";
                     });
-                } else if(!callData) {
-                    document.getElementById('call-screen').classList.add('hidden');
-                }
+                } else if (!d) { document.getElementById('call-screen').classList.add('hidden'); }
             });
         }
-
-        window.startCall = function(type) {
+        window.answerCall = () => {
+            navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(s => {
+                myStream = s; activeCall.answer(s); callAnsTime = Date.now();
+                db.ref('calls/'+auth.currentUser.uid).update({status:'connected'});
+                setupCallView(s);
+            });
+        };
+        window.startCall = (t) => {
             document.getElementById('call-screen').classList.remove('hidden');
             document.getElementById('call-user-name').innerText = selectedFriend.name;
-            document.getElementById('call-status').innerText = "Ringing...";
-            document.getElementById('accept-btn').classList.add('hidden');
-
-            db.ref('calls/' + selectedFriend.uid).set({ from: auth.currentUser.uid, type: type, status: 'ringing' });
-            
-            navigator.mediaDevices.getUserMedia({video: type === 'video', audio: true}).then(function(s) {
-                myStream = s;
-                activeCall = myPeer.call(selectedFriend.uid, s);
-                setupCallView();
-            }).catch(e => alert("Please grant Camera/Mic access."));
-        };
-
-        window.answerCall = function() {
-            db.ref('calls/' + auth.currentUser.uid).update({ status: 'connected' });
-            navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(function(s) {
-                myStream = s;
-                activeCall.answer(s);
-                setupCallView();
+            db.ref('calls/'+selectedFriend.uid).set({ from:myData.uid, type:t, status:'ringing', time:Date.now() });
+            navigator.mediaDevices.getUserMedia({video: t==='video', audio:true}).then(s => {
+                myStream = s; activeCall = myPeer.call(selectedFriend.uid, s);
+                setupCallView(s);
             });
         };
-
-        function setupCallView() {
+        function setupCallView(s) {
             document.getElementById('ringing-ui').classList.add('hidden');
             document.getElementById('video-ui').classList.remove('hidden');
-            document.getElementById('local-video').srcObject = myStream;
-            activeCall.on('stream', function(remoteStream) {
-                document.getElementById('remote-video').srcObject = remoteStream;
-            });
+            document.getElementById('local-video').srcObject = s;
+            activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; if(!callAnsTime) callAnsTime = Date.now(); });
+        }
+        window.rejectCall = () => db.ref('calls/'+myData.uid).remove();
+        window.endCall = () => { if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000)); if(activeCall) activeCall.close(); db.ref('calls/'+myData.uid).remove(); location.reload(); };
+        function logCall(s, d) { var cid = myData.uid < selectedFriend.uid ? myData.uid+selectedFriend.uid : selectedFriend.uid+myData.uid; db.ref('messages/'+cid).push({ sender:myData.uid, text: s==='completed' ? "Talked for "+d+" mins" : "Missed call", type:'call_log', time:Date.now(), read:false }); }
+
+        // --- UNLIMITED MEDIA (REMOVED 1MB ALERT) ---
+        window.processMediaAuto = (file) => {
+            if(!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var rawData = e.target.result;
+                if(file.type.startsWith('image/')) {
+                    var img = new Image(); img.src = rawData;
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas'); var MAX = 400; var scale = MAX/img.width;
+                        canvas.width = MAX; canvas.height = img.height*scale;
+                        canvas.getContext('2d').drawImage(img, 0,0, canvas.width, canvas.height);
+                        sendToDB('img', canvas.toDataURL('image/jpeg', 0.5));
+                    };
+                } else {
+                    // Send large data directly (Removed the alert check)
+                    sendToDB('vid', rawData);
+                }
+            };
+            reader.readAsDataURL(file);
+        };
+        function sendToDB(type, data) {
+            var cid = myData.uid < selectedFriend.uid ? myData.uid+selectedFriend.uid : selectedFriend.uid+myData.uid;
+            db.ref('messages/'+cid).push({sender:myData.uid, type:type, data:data, time:Date.now(), read:false});
         }
 
-        window.rejectCall = function() { db.ref('calls/' + auth.currentUser.uid).remove(); endCall(); };
-        window.endCall = function() { 
-            if(activeCall) activeCall.close();
-            if(myStream) myStream.getTracks().forEach(t => t.stop());
-            db.ref('calls/' + auth.currentUser.uid).remove();
-            location.reload(); 
+        // --- VOICE ---
+        window.toggleVoiceRecord = function() {
+            if (!mediaRecorder || mediaRecorder.state === "inactive") {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(s) {
+                    mediaRecorder = new MediaRecorder(s); mediaRecorder.start(); audioChunks = []; document.getElementById('mic-btn').classList.add('recording-active');
+                    mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
+                    mediaRecorder.onstop = function() {
+                        var reader = new FileReader(); reader.onload = function(e) { sendToDB('audio', e.target.result); };
+                        reader.readAsDataURL(new Blob(audioChunks)); document.getElementById('mic-btn').classList.remove('recording-active');
+                        s.getTracks().forEach(t => t.stop());
+                    };
+                });
+            } else mediaRecorder.stop();
         };
 
-        // --- REACTIONS LOGIC ---
-        window.showEmojiPicker = function(chatId, msgId, event) {
-            event.preventDefault();
-            currentChatReactId = chatId;
-            currentMsgReactId = msgId;
-            var picker = document.getElementById('reaction-bar');
-            picker.style.display = 'block';
-            picker.style.left = event.clientX + 'px';
-            picker.style.top = (event.clientY - 60) + 'px';
-        };
-
-        window.hideReactions = function() { document.getElementById('reaction-bar').style.display = 'none'; };
-
-        window.applyReaction = function(emoji) {
-            if(currentChatReactId && currentMsgReactId) {
-                db.ref('messages/'+currentChatReactId+'/'+currentMsgReactId+'/reaction').set(emoji);
-                hideReactions();
-            }
-        };
-
-        // --- INBOX ---
+        // --- DATA ---
         function loadInbox(){
-            db.ref('friends/'+auth.currentUser.uid).on('value', function(snap){
+            db.ref('friends/'+auth.currentUser.uid).on('value', snap => {
                 var cont = document.getElementById('chats-container'); cont.innerHTML = "";
-                snap.forEach(function(c){
-                    var fUID = c.key;
-                    db.ref('users/'+fUID).once('value').then(function(fs){
-                        var f = fs.val();
-                        var chatId = auth.currentUser.uid < fUID ? auth.currentUser.uid+fUID : fUID+auth.currentUser.uid;
-                        db.ref('messages/'+chatId).on('value', function(mSnap){
+                snap.forEach(c => {
+                    db.ref('users/'+c.key).once('value').then(fs => {
+                        var f = fs.val(); var chatId = myData.uid < f.uid ? myData.uid+f.uid : f.uid+myData.uid;
+                        db.ref('messages/'+chatId).on('value', mSnap => {
                             var unread = 0, lastT = "";
-                            mSnap.forEach(function(m){ 
-                                if(m.val().sender !== auth.currentUser.uid && !m.val().read) unread++;
-                                lastT = formatTime(m.val().time);
-                            });
-                            var divId = "item-"+fUID;
-                            if(document.getElementById(divId)) document.getElementById(divId).remove();
-                            var div = document.createElement('div');
-                            div.id = divId;
-                            div.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer mb-2";
-                            div.onclick = function(){ openChat(f) };
-                            div.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
-                                             <div class="flex-1">
-                                                 <div class="flex justify-between"><p class='font-bold text-sm text-white'>${f.name}</p><p class='text-[10px] text-slate-500'>${lastT}</p></div>
-                                                 <div class="flex justify-between mt-1"><p class='text-[10px] text-slate-400'>Tap to Chat</p>${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ''}</div>
-                                             </div>`;
-                            cont.prepend(div);
+                            mSnap.forEach(m => { if(m.val().sender !== myData.uid && !m.val().read) unread++; lastT = formatTime(m.val().time); });
+                            var d = document.createElement('div'); d.className = "p-4 glass-ui rounded-2xl flex items-center gap-4 cursor-pointer mb-2 w-full";
+                            d.onclick = () => openChat(f);
+                            d.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
+                                           <div class='flex-1'><div class='flex justify-between font-bold text-sm text-white'><span>${f.name}</span><span class='text-slate-500 text-[10px]'>${lastT}</span></div>
+                                           <div class='flex justify-between mt-1'><span class='text-[10px] text-slate-400'>Professional Connection</span>${unread>0?`<span class='unread-badge'>${unread}</span>`:''}</div></div>`;
+                            cont.prepend(d);
                         });
                     });
                 });
             });
         }
 
-        // --- CHAT WINDOW ---
         window.openChat = function(f){
-            selectedFriend = f;
-            document.getElementById('chat-head-name').innerText = f.name;
+            selectedFriend = f; document.getElementById('chat-head-name').innerText = f.name;
             document.getElementById('chat-head-avatar').innerText = f.name[0];
             document.getElementById('chat-window').classList.remove('hidden');
-            var cid = auth.currentUser.uid < f.uid ? auth.currentUser.uid+f.uid : f.uid+auth.currentUser.uid;
-            
-            db.ref('messages/'+cid).on('value', function(snap){
+            var cid = myData.uid < f.uid ? myData.uid+f.uid : f.uid+myData.uid;
+            db.ref('messages/'+cid).on('value', snap => {
                 var box = document.getElementById('chat-messages'); box.innerHTML = "";
-                snap.forEach(function(c){
-                    var m = c.val(), mid = c.key, isMe = m.sender === auth.currentUser.uid;
+                snap.forEach(c => {
+                    var m = c.val(), mid = c.key, isMe = m.sender === myData.uid;
                     if(!isMe && !m.read) db.ref('messages/'+cid+'/'+mid).update({read:true});
-                    var div = document.createElement('div'); div.className = "flex "+(isMe?"justify-end":"justify-start");
-                    
-                    var reactionHtml = m.reaction ? `<div class="reaction-badge">${m.reaction}</div>` : '';
-                    var content = `<p class='text-sm'>${m.text||''}</p>`;
-                    if(m.type==='img') content = `<img src='${m.data}'>`;
-                    if(m.type==='vid') content = `<video src='${m.data}' controls></video>`;
-                    if(m.type==='audio') content = `<audio src='${m.data}' controls preload="auto"></audio>`;
-                    
-                    div.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}' ondblclick="showEmojiPicker('${cid}','${mid}', event)">
-                                        ${content}
-                                        <div class="flex justify-between items-center mt-1 gap-4">
-                                            <span class='text-[8px] opacity-60'>${m.edited?'Edited ':''}${formatTime(m.time)}</span>
-                                            <button onclick="toggleMsgMenu('${mid}')" class="p-1 opacity-50"><i data-lucide="more-horizontal" class="w-3"></i></button>
-                                        </div>
-                                        ${reactionHtml}
-                                        <div id="menu-${mid}" class="msg-menu">
-                                            <button onclick="downloadMedia('${m.data}','${m.type}')"><i data-lucide="download" class="w-3 h-3"></i> Save</button>
-                                            ${isMe ? `<button onclick="editMsg('${cid}','${mid}','${m.text}')"><i data-lucide="edit-2" class="w-3 h-3"></i> Edit</button>
-                                                      <button onclick="deleteMsg('${cid}','${mid}')" class="text-red-400"><i data-lucide="trash-2" class="w-3 h-3 text-red-400"></i> Delete</button>` : ''}
-                                        </div>
-                                    </div>`;
-                    box.appendChild(div);
+                    if(m.type === 'call_log'){
+                        var pill = document.createElement('div'); pill.className="call-log-pill"; pill.innerHTML=`<i data-lucide="phone"></i> ${m.text}`; box.appendChild(pill);
+                    } else {
+                        var d = document.createElement('div'); d.className = "flex "+(isMe?"justify-end":"justify-start");
+                        var reactHtml = m.reaction ? `<div class="reaction-badge">${m.reaction}</div>` : '';
+                        var content = `<p class='text-sm'>${m.text||''}</p>`;
+                        if(m.type==='img') content = `<img src='${m.data}'>`;
+                        if(m.type==='vid') content = `<video src='${m.data}' controls></video>`;
+                        if(m.type==='audio') content = `<audio src='${m.data}' controls></audio>`;
+                        d.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}' ondblclick="showReact('${cid}','${mid}', event)">
+                            ${content}${reactHtml}<div class="flex justify-between items-center mt-1 gap-4"><span class='text-[8px] opacity-60'>${formatTime(m.time)}</span>
+                            <button onclick="toggleMsgMenu('${mid}')" class="p-1 opacity-50"><i data-lucide="more-horizontal" class="w-3"></i></button></div>
+                            <div id="menu-${mid}" class="msg-menu"><button onclick="downloadMedia('${m.data}')">Save</button>
+                            ${isMe?`<button onclick="editMsg('${cid}','${mid}','${m.text}')">Edit</button><button onclick="deleteMsg('${cid}','${mid}')" class="text-red-400">Delete</button>`:''}</div></div>`;
+                        box.appendChild(d);
+                    }
                 });
-                box.scrollTop = box.scrollHeight;
-                lucide.createIcons();
+                box.scrollTop = box.scrollHeight; lucide.createIcons();
             });
-        };
-
-        // --- CORE FUNCTIONS ---
-        window.toggleMsgMenu = function(id){ document.getElementById('menu-'+id).classList.toggle('show-menu'); };
-        window.deleteMsg = function(cid, mid){ if(confirm("Delete message?")) db.ref('messages/'+cid+'/'+mid).remove(); };
-        window.editMsg = function(cid, mid, old){ var n = prompt("Edit:", old); if(n) db.ref('messages/'+cid+'/'+mid).update({text:n, edited:true}); };
-        window.sendTextMsg = function(){
-            var v = document.getElementById('msg-input').value.trim(); if(!v) return;
-            var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, text:v, type:'text', time:Date.now(), read:false});
-            document.getElementById('msg-input').value = "";
-        };
-
-        window.toggleVoiceRecord = function() {
-            var btn = document.getElementById('mic-btn');
-            if (!mediaRecorder || mediaRecorder.state === "inactive") {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-                    var mType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
-                    mediaRecorder = new MediaRecorder(stream, { mimeType: mType });
-                    mediaRecorder.start(); audioChunks = []; btn.classList.add('recording-active');
-                    mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
-                    mediaRecorder.onstop = function() {
-                        var reader = new FileReader(); reader.onload = function(e) {
-                            var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                            db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:'audio', data:e.target.result, time:Date.now(), read:false});
-                        };
-                        reader.readAsDataURL(new Blob(audioChunks, {type: mType}));
-                        btn.classList.remove('recording-active');
-                        stream.getTracks().forEach(t => t.stop());
-                    };
-                });
-            } else mediaRecorder.stop();
-        };
-
-        // --- MEDIA HANDLING (PHOTO FIXED) ---
-        window.processMedia = function(file) {
-            if(!file) return;
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                var rawData = e.target.result;
-                if(file.type.startsWith('image/')) {
-                    // Ultra-Compression to ensure database acceptance
-                    var img = new Image(); img.src = rawData;
-                    img.onload = function() {
-                        var canvas = document.createElement('canvas');
-                        var MAX = 350; var scale = MAX / img.width;
-                        canvas.width = MAX; canvas.height = img.height * scale;
-                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                        var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                        db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:'img', data:canvas.toDataURL('image/jpeg', 0.4), time:Date.now(), read:false});
-                    };
-                } else if(file.size < 1000000) { 
-                    var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
-                    db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:'vid', data:rawData, time:Date.now(), read:false});
-                } else { alert("File too big! Keep under 1MB."); }
-            };
-            reader.readAsDataURL(file);
         };
 
         // --- UTILS ---
+        window.sendTextMsg = () => { var v = document.getElementById('msg-input').value; if(v){ sendToDB('text', v); document.getElementById('msg-input').value=""; }};
+        window.deleteFullChat = () => { if(confirm("Delete chat?")) db.ref('messages/'+(myData.uid<selectedFriend.uid?myData.uid+selectedFriend.uid:selectedFriend.uid+myData.uid)).remove(); };
+        var crC, crM;
+        window.showReact = (c,m,e) => { crC=c; crM=m; var b=document.getElementById('reaction-bar'); b.style.display='block'; b.style.left=e.clientX+'px'; b.style.top=(e.clientY-60)+'px'; };
+        window.hideReactions = () => document.getElementById('reaction-bar').style.display='none';
+        window.applyReaction = (emoji) => { db.ref('messages/'+crC+'/'+crM+'/reaction').set(emoji); hideReactions(); };
+        window.toggleMsgMenu = (id) => document.getElementById('menu-'+id).classList.toggle('show-menu');
+        window.deleteMsg = (cid, mid) => db.ref('messages/'+cid+'/'+mid).remove();
+        window.editMsg = (cid, mid, old) => { var n = prompt("Edit:", old); if(n) db.ref('messages/'+cid+'/'+mid).update({text:n}); };
         function formatTime(ts){ if(!ts) return ""; var d = new Date(ts); return d.getHours()+":"+(d.getMinutes()<10?'0':'')+d.getMinutes(); }
-        window.switchTab = function(t){
-            document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
-            document.getElementById('view-'+t).classList.remove('hidden');
-            document.getElementById('nav-'+t).classList.add('nav-active');
-        };
-        window.closeChat = function(){document.getElementById('chat-window').classList.add('hidden');};
-        window.openSearch = function(){document.getElementById('search-modal').classList.remove('hidden')};
-        window.closeSearch = function(){document.getElementById('search-modal').classList.add('hidden')};
-        window.findUser = function(){
-            var u = document.getElementById('search-username-input').value.toLowerCase().trim();
-            db.ref('usernames/'+u).once('value', function(s){
-                if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username-display').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); }
-                else alert("User not found");
-            });
-        };
-        window.sendFriendRequest = function(){ db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:myData.name, username:myData.username}); alert("Sent!"); closeSearch(); };
-        window.acceptFriend = function(uid){ db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
-        window.downloadMedia = function(d, t){ var a=document.createElement("a"); a.href=d; a.download="mustafai."+(t==='img'?'jpg':'mp4'); a.click(); };
-        window.toggleEditProfile = function(e){ var n=prompt("New Name:",myData.name); if(n) db.ref('users/'+myData.uid).update({name:n}); };
-
-        window.onload = function(){ if(window.lucide) lucide.createIcons(); };
+        window.switchTab = (t) => { document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active')); document.getElementById('view-'+t).classList.remove('hidden'); document.getElementById('nav-'+t).classList.add('nav-active'); document.getElementById('view-title').innerText = t==='requests'?'Inbox':t.charAt(0).toUpperCase()+t.slice(1); lucide.createIcons(); };
+        window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
+        window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
+        window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
+        window.findUser = () => { var u = document.getElementById('search-username-input').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
+        window.sendFriendRequest = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:myData.name, username:myData.username}); alert("Sent!"); closeSearch(); };
+        window.acceptFriend = (uid) => { db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
+        window.downloadMedia = (d) => { var a=document.createElement("a"); a.href=d; a.download="file.jpg"; a.click(); };
+        window.onload = () => lucide.createIcons();
     </script>
 </body>
 </html>
