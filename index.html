@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mustafai Chatting App | Final Pro Max</title>
+    <title>Mustafai Chatting App | Premium Chat Hub</title>
     
     <!-- Professional Tools -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,13 +30,13 @@
         .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; position: relative; }
         
         video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
-        audio { width: 200px; height: 35px; margin-top: 5px; }
+        audio { width: 200px; height: 40px; margin-top: 5px; }
         
         .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
         .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; }
         
         #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s; }
-        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; }
+        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .show-menu { display: block !important; }
         .reaction-badge { position: absolute; bottom: -12px; right: 10px; background: #334155; border-radius: 12px; padding: 1px 6px; font-size: 12px; }
 
@@ -54,11 +54,11 @@
 
     <!-- REACTION BAR -->
     <div id="reaction-bar" onmouseleave="hideReactions()">
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
     </div>
 
     <!-- CALL OVERLAY -->
@@ -75,7 +75,7 @@
         <div id="video-ui" class="absolute inset-0 hidden">
             <video id="remote-video" class="call-video-full" autoplay playsinline></video>
             <video id="local-video" class="call-video-self" autoplay playsinline muted></video>
-            <button onclick="endCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
+            <button onclick="handleEndCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
         </div>
     </div>
 
@@ -116,8 +116,10 @@
 
         <main class="main-content">
             <div id="view-home" class="tab-view w-full"><div id="chats-container" class="space-y-1"></div></div>
-            <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container" class="space-y-3"></div></div>
-            
+            <div id="view-requests" class="tab-view hidden pt-4">
+                <h3 class="text-xs text-slate-500 font-bold mb-4 uppercase tracking-widest">Inbox Requests</h3>
+                <div id="requests-container" class="space-y-3"></div>
+            </div>
             <div id="view-profile" class="tab-view hidden text-center pt-8">
                 <div class="w-28 h-28 bg-indigo-600 rounded-3xl flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
                 <div id="p-display-box">
@@ -167,13 +169,13 @@
     </div>
 
     <!-- SEARCH MODAL -->
-    <div id="search-modal" class="fixed inset-0 z-[1100] bg-black/95 hidden flex items-center justify-center p-6">
+    <div id="search-modal" class="fixed inset-0 z-[1100] bg-black/95 hidden flex items-center justify-center p-6 text-center">
         <div class="w-full max-w-xs glass-ui p-8 rounded-3xl space-y-4">
-            <h3 class="font-bold text-white text-center">Find Connection</h3>
+            <h3 class="font-bold text-white text-xl">Find Connection</h3>
             <input type="text" id="search-input-val" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
             <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center border border-indigo-500/20">
-                <span id="res-username" class="text-white font-bold text-sm">@user</span>
+                <span id="res-username-display" class="text-white font-bold text-sm">@user</span>
                 <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded text-xs font-bold shadow-lg">Add</button>
             </div>
             <button onclick="closeSearch()" class="w-full text-slate-500 text-xs font-bold uppercase mt-4 tracking-widest">Cancel</button>
@@ -289,53 +291,48 @@
             var reader = new FileReader();
             reader.onload = function(e) {
                 var fileData = e.target.result;
-                var type = file.type.startsWith('image/') ? 'img' : 'vid';
-                var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
-                
-                var msgRef = db.ref('messages/'+cid).push();
-                var msgId = msgRef.key;
-                var chunkSize = 100000; // 100KB chunks
-                var totalChunks = Math.ceil(fileData.length / chunkSize);
-
-                msgRef.set({
-                    sender: me.uid,
-                    type: type,
-                    isChunked: true,
-                    totalChunks: totalChunks,
-                    time: Date.now(),
-                    read: false
-                });
-
-                for (var i = 0; i < totalChunks; i++) {
-                    var start = i * chunkSize;
-                    var end = start + chunkSize;
-                    db.ref('chunks/'+msgId+'/'+i).set(fileData.substring(start, end));
-                }
+                var type = file.type.startsWith('image/') ? 'img' : (file.type.startsWith('video/') ? 'vid' : 'audio');
+                sendChunkedData(type, fileData);
             };
             reader.readAsDataURL(file);
         };
 
-        // --- VOICE WORKING FIXED ---
+        function sendChunkedData(type, fileData) {
+            var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
+            var msgRef = db.ref('messages/'+cid).push();
+            var msgId = msgRef.key;
+            var chunkSize = 100000; // 100KB chunks
+            var totalChunks = Math.ceil(fileData.length / chunkSize);
+
+            msgRef.set({
+                sender: me.uid,
+                type: type,
+                isChunked: true,
+                totalChunks: totalChunks,
+                time: Date.now(),
+                read: false
+            });
+
+            for (var i = 0; i < totalChunks; i++) {
+                var start = i * chunkSize;
+                var end = start + chunkSize;
+                db.ref('chunks/'+msgId+'/'+i).set(fileData.substring(start, end));
+            }
+        }
+
+        // --- VOICE RECORDING (CHUNKED) ---
         window.toggleVoice = () => {
             if (!mediaRec || mediaRec.state === "inactive") {
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
-                    var types = ['audio/webm', 'audio/mp4', 'audio/ogg'];
-                    var selectedType = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
-                    mediaRec = new MediaRecorder(s, { mimeType: selectedType });
-                    mediaRec.start(); audioChks = []; document.getElementById('mic-btn').classList.add('text-red-500');
-                    mediaRec.ondataavailable = e => { if(e.data.size > 0) audioChks.push(e.data); };
+                    var mType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+                    mediaRec = new MediaRecorder(s, { mimeType: mType }); mediaRec.start(); audioChks = []; document.getElementById('mic-btn').classList.add('text-red-500');
+                    mediaRec.ondataavailable = e => audioChks.push(e.data);
                     mediaRec.onstop = () => {
-                        var blob = new Blob(audioChks, { type: selectedType });
-                        var r = new FileReader();
-                        r.onload = e => {
-                            var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
-                            db.ref('messages/'+cid).push({sender:me.uid, type:'audio', data:e.target.result, time:Date.now(), read:false});
-                        };
-                        r.readAsDataURL(blob);
-                        document.getElementById('mic-btn').classList.remove('text-red-500');
-                        s.getTracks().forEach(t => t.stop());
+                        var r = new FileReader(); r.onload = e => sendChunkedData('audio', e.target.result);
+                        r.readAsDataURL(new Blob(audioChks, {type: mType})); 
+                        document.getElementById('mic-btn').classList.remove('text-red-500'); s.getTracks().forEach(t => t.stop());
                     };
-                }).catch(() => alert("Mic Access Denied"));
+                });
             } else mediaRec.stop();
         };
 
@@ -359,6 +356,14 @@
                     });
                 });
             });
+            db.ref('requests/'+me.uid).on('value', s => {
+                var cont = document.getElementById('requests-container'); cont.innerHTML = "";
+                s.forEach(c => {
+                    var r = c.val(); var d = document.createElement('div'); d.className = "flex items-center justify-between p-4 bg-slate-800 rounded-2xl mb-2 border border-white/5";
+                    d.innerHTML = `<div><p class='font-bold text-white text-sm'>${r.name}</p></div><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Accept</button>`;
+                    cont.appendChild(d);
+                });
+            });
         }
 
         window.openChat = function(f){
@@ -377,14 +382,9 @@
                         var d = document.createElement('div'); d.className = "flex "+(isMe?"justify-end":"justify-start");
                         var reactHtml = m.reaction ? `<div class="reaction-badge">${m.reaction}</div>` : '';
                         var contentId = "content-" + mid;
-                        var content = `<p id="${contentId}" class='text-sm text-left'>${m.text||'Loading media...'}</p>`;
-                        
-                        if(m.isChunked) {
-                            assembleChunks(mid, m.totalChunks, m.type, contentId);
-                        } else if(m.type==='audio') {
-                            content = `<audio src='${m.data}' controls></audio>`;
-                        }
-
+                        var content = `<p id="${contentId}" class='text-sm text-left'>${m.text||'Loading...'}</p>`;
+                        if(m.isChunked) assembleChunks(mid, m.totalChunks, m.type, contentId);
+                        else if(m.type==='audio') content = `<audio src='${m.data}' controls></audio>`;
                         d.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}' ondblclick="showReact('${cid}','${mid}', event)">
                             ${content}${reactHtml}<div class="flex justify-between items-center mt-1 gap-4 text-left"><span class='text-[8px] opacity-60'>${formatTime(m.time)}</span>
                             <button onclick="toggleMsgMenu('${mid}')" class="p-1 opacity-50"><i data-lucide="more-horizontal" class="w-3"></i></button></div>
@@ -399,12 +399,12 @@
 
         function assembleChunks(msgId, total, type, targetId) {
             db.ref('chunks/'+msgId).once('value', snap => {
-                var chunks = snap.val();
-                var fullData = "";
-                for(var i=0; i<total; i++) { fullData += chunks[i]; }
+                var chunks = snap.val(); var fullData = "";
+                for(var i=0; i<total; i++) { if(chunks[i]) fullData += chunks[i]; }
                 var el = document.getElementById(targetId);
                 if(type === 'img') el.innerHTML = `<img src="${fullData}">`;
-                else el.innerHTML = `<video src="${fullData}" controls></video>`;
+                else if(type === 'vid') el.innerHTML = `<video src="${fullData}" controls></video>`;
+                else if(type === 'audio') el.innerHTML = `<audio src="${fullData}" controls></audio>`;
             });
         }
 
@@ -423,10 +423,10 @@
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
         window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
         window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
-        window.findUser = () => { var u = document.getElementById('search-username-input').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
-        window.sendReq = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:me.name, username:me.username}); alert("Sent!"); closeSearch(); };
+        window.findUser = () => { var u = document.getElementById('search-input-val').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username-display').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
+        window.sendFriendRequest = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:me.name, username:me.username}); alert("Sent!"); closeSearch(); };
         window.acceptFriend = (uid) => { db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
-        window.downloadMediaFromId = (id) => { var src = document.getElementById(id).querySelector('img, video').src; var a=document.createElement("a"); a.href=src; a.download="file"; a.click(); };
+        window.downloadMediaFromId = (id) => { var src = document.getElementById(id).querySelector('img, video, audio').src; var a=document.createElement("a"); a.href=src; a.download="file"; a.click(); };
         window.onload = () => lucide.createIcons();
     </script>
 </body>
