@@ -30,7 +30,7 @@
         .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; position: relative; }
         
         video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
-        audio { width: 200px; height: 40px; margin-top: 5px; }
+        audio { width: 200px; height: 38px; margin-top: 5px; }
         
         .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
         .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; width: fit-content; }
@@ -41,10 +41,11 @@
         .reaction-badge { position: absolute; bottom: -12px; right: 10px; background: #334155; border-radius: 12px; padding: 1px 6px; font-size: 12px; }
 
         .credits { position: fixed; bottom: 80px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
+        .ring-anim { animation: ring-pulse 1.5s infinite; }
+        @keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } }
+
         .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; background: #000; }
-        .call-video-self { width: 95px; height: 135px; position: absolute; top: 15px; right: 15px; border: 2px solid white; z-index: 100; border-radius: 12px; }
-        .ringing { animation: ring-pulse 1.5s infinite; }
-        @keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
+        .call-video-self { width: 95px; height: 135px; position: absolute; top: 15px; right: 15px; border: 2px solid white; z-index: 100; border-radius: 12px; background: #1e293b; }
     </style>
 </head>
 <body>
@@ -53,17 +54,17 @@
 
     <!-- REACTION BAR -->
     <div id="reaction-bar" onmouseleave="hideReactions()">
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
-        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
+        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
     </div>
 
     <!-- CALL OVERLAY -->
     <div id="call-screen" class="fixed inset-0 z-[5000] bg-slate-950 hidden flex flex-col items-center justify-center p-6 text-center">
         <div id="ringing-ui">
-            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ringing" id="call-avatar">?</div>
+            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ring-anim" id="call-avatar">?</div>
             <h2 class="text-3xl font-bold mb-2 text-white" id="call-user-name">User</h2>
             <p class="text-indigo-400 animate-pulse mb-12" id="call-status-label">Incoming Call...</p>
             <div class="flex gap-10 justify-center mt-10">
@@ -74,7 +75,7 @@
         <div id="video-ui" class="absolute inset-0 hidden">
             <video id="remote-video" class="call-video-full" autoplay playsinline></video>
             <video id="local-video" class="call-video-self" autoplay playsinline muted></video>
-            <button onclick="endCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
+            <button onclick="handleEndCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
         </div>
     </div>
 
@@ -138,7 +139,7 @@
         </main>
 
         <nav class="nav-bar">
-            <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active"><i data-lucide="message-circle"></i><span>Home</span></button>
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active"><i data-lucide="message-square"></i><span>Home</span></button>
             <button onclick="switchTab('requests')" id="nav-requests" class="nav-btn"><i data-lucide="bell"></i><span>Inbox</span></button>
             <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn"><i data-lucide="user"></i><span>Profile</span></button>
         </nav>
@@ -171,10 +172,10 @@
     <div id="search-modal" class="fixed inset-0 z-[1100] bg-black/95 hidden flex items-center justify-center p-6 text-center">
         <div class="w-full max-w-xs glass-ui p-8 rounded-3xl space-y-4">
             <h3 class="font-bold text-white text-xl">Find Connection</h3>
-            <input type="text" id="search-username-input" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
+            <input type="text" id="search-input-val" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
             <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center border border-indigo-500/20">
-                <span id="res-username-display" class="text-white font-bold text-sm">@user</span>
+                <span id="res-username" class="text-white font-bold text-sm">@user</span>
                 <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded text-xs font-bold shadow-lg">Add</button>
             </div>
             <button onclick="closeSearch()" class="w-full text-slate-500 text-xs font-bold uppercase mt-4 tracking-widest">Cancel</button>
@@ -240,8 +241,11 @@
         window.toggleEditMode = (e) => { document.getElementById('p-display-box').classList.toggle('hidden', e); document.getElementById('p-edit-box').classList.toggle('hidden', !e); if(e) document.getElementById('edit-name-val').value = me.name; };
         window.saveNameUpdate = () => { var n = document.getElementById('edit-name-val').value; if(n) db.ref('users/'+me.uid).update({name:n}).then(()=>toggleEditMode(false)); };
 
-        // --- CALLS ---
-        function initPeer(id) { myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] } }); myPeer.on('call', (c) => { activeCall = c; }); }
+        // --- CALLS WORKING FIXED ---
+        function initPeer(id) { 
+            myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'stun:stun1.l.google.com:19302' }] } }); 
+            myPeer.on('call', (c) => { activeCall = c; }); 
+        }
         function listenSignals() {
             db.ref('calls/'+auth.currentUser.uid).on('value', snap => {
                 var d = snap.val();
@@ -277,8 +281,8 @@
             document.getElementById('local-video').srcObject = s;
             activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; if(!callAnsTime) callAnsTime = Date.now(); });
         }
-        window.rejectCall = () => { logCall('missed'); db.ref('calls/'+me.uid).remove(); location.reload(); };
-        window.endCall = () => { if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000)); if(activeCall) activeCall.close(); if(myStream) myStream.getTracks().forEach(t => t.stop()); db.ref('calls/'+me.uid).remove(); location.reload(); };
+        window.handleRejectCall = () => { logCall('missed'); db.ref('calls/'+me.uid).remove(); location.reload(); };
+        window.handleEndCall = () => { if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000)); if(activeCall) activeCall.close(); if(myStream) myStream.getTracks().forEach(t => t.stop()); db.ref('calls/'+me.uid).remove(); location.reload(); };
         function logCall(s, d, peer) { var pId = peer || selectedFriend.uid; var cid = me.uid < pId ? me.uid+pId : pId+me.uid; db.ref('messages/'+cid).push({ sender:me.uid, text: s==='completed' ? "Baat: "+d+" mins" : "Missed call", type:'call_log', time:Date.now(), read:false }); }
 
         // --- UNLIMITED MEDIA CHUNKING (VOICE, PIC, VIDEO) ---
@@ -423,7 +427,7 @@
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
         window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
         window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
-        window.findUser = () => { var u = document.getElementById('search-username-input').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username-display').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
+        window.findUser = () => { var u = document.getElementById('search-input-val').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
         window.sendFriendRequest = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:me.name, username:me.username}); alert("Sent!"); closeSearch(); };
         window.acceptFriend = (uid) => { db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
         window.downloadMediaFromId = (id) => { var src = document.getElementById(id).querySelector('img, video, audio').src; var a=document.createElement("a"); a.href=src; a.download="file"; a.click(); };
