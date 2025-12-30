@@ -30,10 +30,10 @@
         .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; position: relative; }
         
         video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
-        audio { width: 200px; height: 38px; margin-top: 5px; }
+        audio { width: 200px; height: 40px; margin-top: 5px; }
         
         .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
-        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; }
+        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; width: fit-content; }
         
         #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s; }
         .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
@@ -41,11 +41,10 @@
         .reaction-badge { position: absolute; bottom: -12px; right: 10px; background: #334155; border-radius: 12px; padding: 1px 6px; font-size: 12px; }
 
         .credits { position: fixed; bottom: 80px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
-        .ring-anim { animation: ring-pulse 1.5s infinite; }
-        @keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } }
-
         .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; background: #000; }
-        .call-video-self { width: 95px; height: 135px; position: absolute; top: 15px; right: 15px; border: 2px solid white; z-index: 100; border-radius: 12px; background: #1e293b; }
+        .call-video-self { width: 95px; height: 135px; position: absolute; top: 15px; right: 15px; border: 2px solid white; z-index: 100; border-radius: 12px; }
+        .ringing { animation: ring-pulse 1.5s infinite; }
+        @keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
     </style>
 </head>
 <body>
@@ -54,17 +53,17 @@
 
     <!-- REACTION BAR -->
     <div id="reaction-bar" onmouseleave="hideReactions()">
-        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
-        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
-        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
-        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
-        <span class="emoji-btn cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
+        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('❤️')">❤️</span>
+        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😂')">😂</span>
+        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('👍')">👍</span>
+        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😮')">😮</span>
+        <span class="cursor-pointer p-1 text-2xl" onclick="applyReaction('😢')">😢</span>
     </div>
 
     <!-- CALL OVERLAY -->
     <div id="call-screen" class="fixed inset-0 z-[5000] bg-slate-950 hidden flex flex-col items-center justify-center p-6 text-center">
         <div id="ringing-ui">
-            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ring-anim" id="call-avatar">?</div>
+            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ringing" id="call-avatar">?</div>
             <h2 class="text-3xl font-bold mb-2 text-white" id="call-user-name">User</h2>
             <p class="text-indigo-400 animate-pulse mb-12" id="call-status-label">Incoming Call...</p>
             <div class="flex gap-10 justify-center mt-10">
@@ -75,7 +74,7 @@
         <div id="video-ui" class="absolute inset-0 hidden">
             <video id="remote-video" class="call-video-full" autoplay playsinline></video>
             <video id="local-video" class="call-video-self" autoplay playsinline muted></video>
-            <button onclick="handleEndCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
+            <button onclick="endCall()" class="absolute bottom-10 left-1/2 -translate-x-1/2 bg-red-600 p-6 rounded-full z-[5001] shadow-2xl"><i data-lucide="phone-off"></i></button>
         </div>
     </div>
 
@@ -116,8 +115,10 @@
 
         <main class="main-content">
             <div id="view-home" class="tab-view w-full"><div id="chats-container" class="space-y-1"></div></div>
-            <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container" class="space-y-3"></div></div>
-            
+            <div id="view-requests" class="tab-view hidden pt-4">
+                <h3 class="text-xs text-slate-500 font-bold mb-4 uppercase tracking-widest">Inbox Requests</h3>
+                <div id="requests-container" class="space-y-3"></div>
+            </div>
             <div id="view-profile" class="tab-view hidden text-center pt-8">
                 <div class="w-28 h-28 bg-indigo-600 rounded-3xl flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
                 <div id="p-display-box">
@@ -173,7 +174,7 @@
             <input type="text" id="search-username-input" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
             <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center border border-indigo-500/20">
-                <span id="res-username" class="text-white font-bold text-sm">@user</span>
+                <span id="res-username-display" class="text-white font-bold text-sm">@user</span>
                 <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded text-xs font-bold shadow-lg">Add</button>
             </div>
             <button onclick="closeSearch()" class="w-full text-slate-500 text-xs font-bold uppercase mt-4 tracking-widest">Cancel</button>
@@ -239,11 +240,8 @@
         window.toggleEditMode = (e) => { document.getElementById('p-display-box').classList.toggle('hidden', e); document.getElementById('p-edit-box').classList.toggle('hidden', !e); if(e) document.getElementById('edit-name-val').value = me.name; };
         window.saveNameUpdate = () => { var n = document.getElementById('edit-name-val').value; if(n) db.ref('users/'+me.uid).update({name:n}).then(()=>toggleEditMode(false)); };
 
-        // --- CALLS WORKING FIXED ---
-        function initPeer(id) { 
-            myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'stun:stun1.l.google.com:19302' }] } }); 
-            myPeer.on('call', (c) => { activeCall = c; }); 
-        }
+        // --- CALLS ---
+        function initPeer(id) { myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] } }); myPeer.on('call', (c) => { activeCall = c; }); }
         function listenSignals() {
             db.ref('calls/'+auth.currentUser.uid).on('value', snap => {
                 var d = snap.val();
@@ -251,102 +249,91 @@
                     db.ref('users/'+d.from).once('value', u => {
                         document.getElementById('call-screen').classList.remove('hidden');
                         document.getElementById('call-user-name').innerText = u.val().name;
-                        document.getElementById('call-avatar').innerText = u.val().name[0];
                         document.getElementById('accept-btn').classList.remove('hidden');
-                        document.getElementById('call-status-label').innerText = "Incoming " + d.type + " Call...";
-                        window.incomingCallType = d.type;
+                        window.incomingFromUID = d.from;
                     });
                 } else if(!d) document.getElementById('call-screen').classList.add('hidden');
             });
         }
-        window.startCallPro = (type) => {
-            document.getElementById('call-screen').classList.remove('hidden');
-            document.getElementById('call-user-name').innerText = selectedFriend.name;
-            document.getElementById('call-avatar').innerText = selectedFriend.name[0];
-            document.getElementById('call-status-label').innerText = "Ringing...";
-            document.getElementById('accept-btn').classList.add('hidden');
-            db.ref('calls/'+selectedFriend.uid).set({ from:me.uid, type:type, status:'ringing', time:Date.now() });
-            
-            var constraints = { audio: true, video: type === 'video' };
-            navigator.mediaDevices.getUserMedia(constraints).then(s => {
-                myStream = s; activeCall = myPeer.call(selectedFriend.uid, s);
-                setupCallView(s, type);
-            }).catch(e => alert("Mic/Camera Blocked"));
-        };
         window.handleAcceptCall = () => {
-            var constraints = { audio: true, video: window.incomingCallType === 'video' };
-            navigator.mediaDevices.getUserMedia(constraints).then(s => {
+            navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(s => {
                 myStream = s; activeCall.answer(s); callAnsTime = Date.now();
                 db.ref('calls/'+auth.currentUser.uid).update({status:'connected'});
-                setupCallView(s, window.incomingCallType);
+                setupCallView(s);
             });
         };
-        function setupCallView(s, type) {
+        window.startCallPro = (t) => {
+            document.getElementById('call-screen').classList.remove('hidden');
+            document.getElementById('call-user-name').innerText = selectedFriend.name;
+            db.ref('calls/'+selectedFriend.uid).set({ from:me.uid, type:t, status:'ringing', time:Date.now() });
+            navigator.mediaDevices.getUserMedia({video: t==='video', audio:true}).then(s => {
+                myStream = s; activeCall = myPeer.call(selectedFriend.uid, s);
+                setupCallView(s);
+            });
+        }
+        function setupCallView(s) {
             document.getElementById('ringing-ui').classList.add('hidden');
             document.getElementById('video-ui').classList.remove('hidden');
-            if(type === 'video') {
-                document.getElementById('local-video').classList.remove('hidden');
-                document.getElementById('remote-video').classList.remove('hidden');
-                document.getElementById('local-video').srcObject = s;
-                activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; if(!callAnsTime) callAnsTime = Date.now(); });
-            } else {
-                document.getElementById('local-video').classList.add('hidden');
-                document.getElementById('remote-video').classList.add('hidden');
-                activeCall.on('stream', rs => { if(!callAnsTime) callAnsTime = Date.now(); });
-            }
+            document.getElementById('local-video').srcObject = s;
+            activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; if(!callAnsTime) callAnsTime = Date.now(); });
         }
         window.rejectCall = () => { logCall('missed'); db.ref('calls/'+me.uid).remove(); location.reload(); };
-        window.handleEndCall = () => { if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000)); if(activeCall) activeCall.close(); if(myStream) myStream.getTracks().forEach(t => t.stop()); db.ref('calls/'+me.uid).remove(); location.reload(); };
+        window.endCall = () => { if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000)); if(activeCall) activeCall.close(); if(myStream) myStream.getTracks().forEach(t => t.stop()); db.ref('calls/'+me.uid).remove(); location.reload(); };
         function logCall(s, d, peer) { var pId = peer || selectedFriend.uid; var cid = me.uid < pId ? me.uid+pId : pId+me.uid; db.ref('messages/'+cid).push({ sender:me.uid, text: s==='completed' ? "Baat: "+d+" mins" : "Missed call", type:'call_log', time:Date.now(), read:false }); }
 
-        // --- MEDIA CHUNKING ---
+        // --- UNLIMITED MEDIA CHUNKING (VOICE, PIC, VIDEO) ---
         window.processUnlimitedMedia = (file) => {
             if(!file) return;
             var reader = new FileReader();
             reader.onload = function(e) {
                 var fileData = e.target.result;
                 var type = file.type.startsWith('image/') ? 'img' : (file.type.startsWith('video/') ? 'vid' : 'audio');
-                var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
-                var msgRef = db.ref('messages/'+cid).push();
-                var msgId = msgRef.key;
-                var chunkSize = 100000;
-                var totalChunks = Math.ceil(fileData.length / chunkSize);
-                msgRef.set({ sender: me.uid, type: type, isChunked: true, totalChunks: totalChunks, time: Date.now(), read: false });
-                for (var i = 0; i < totalChunks; i++) {
-                    var start = i * chunkSize;
-                    var end = start + chunkSize;
-                    db.ref('chunks/'+msgId+'/'+i).set(fileData.substring(start, end));
-                }
+                sendChunkedData(type, fileData);
             };
             reader.readAsDataURL(file);
         };
 
-        // --- VOICE ---
-        window.toggleVoice = () => {
-            if (!mediaRec || mediaRec.state === "inactive") {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
-                    mediaRec = new MediaRecorder(s); mediaRec.start(); audioChks = []; document.getElementById('mic-btn').classList.add('text-red-500');
-                    mediaRec.ondataavailable = e => audioChks.push(e.data);
-                    mediaRec.onstop = () => {
-                        var r = new FileReader(); r.onload = e => sendChunkedData('audio', e.target.result);
-                        r.readAsDataURL(new Blob(audioChks)); document.getElementById('mic-btn').classList.remove('text-red-500'); s.getTracks().forEach(t => t.stop());
-                    };
-                });
-            } else mediaRec.stop();
-        };
         function sendChunkedData(type, fileData) {
             var cid = me.uid < selectedFriend.uid ? me.uid+selectedFriend.uid : selectedFriend.uid+me.uid;
             var msgRef = db.ref('messages/'+cid).push();
             var msgId = msgRef.key;
-            var chunkSize = 100000;
+            var chunkSize = 100000; // 100KB chunks
             var totalChunks = Math.ceil(fileData.length / chunkSize);
-            msgRef.set({ sender: me.uid, type: type, isChunked: true, totalChunks: totalChunks, time: Date.now(), read: false });
+
+            msgRef.set({
+                sender: me.uid,
+                type: type,
+                isChunked: true,
+                totalChunks: totalChunks,
+                time: Date.now(),
+                read: false
+            });
+
             for (var i = 0; i < totalChunks; i++) {
                 var start = i * chunkSize;
                 var end = start + chunkSize;
                 db.ref('chunks/'+msgId+'/'+i).set(fileData.substring(start, end));
             }
         }
+
+        // --- VOICE RECORDING (CHUNKED) ---
+        window.toggleVoice = () => {
+            if (!mediaRec || mediaRec.state === "inactive") {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+                    var mType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
+                    mediaRec = new MediaRecorder(s, { mimeType: mType }); mediaRec.start(); audioChks = []; document.getElementById('mic-btn').classList.add('text-red-500');
+                    mediaRec.ondataavailable = e => { if(e.data.size > 0) audioChks.push(e.data); };
+                    mediaRec.onstop = () => {
+                        var blob = new Blob(audioChks, { type: mType });
+                        var r = new FileReader();
+                        r.onload = e => sendChunkedData('audio', e.target.result);
+                        r.readAsDataURL(blob);
+                        document.getElementById('mic-btn').classList.remove('text-red-500');
+                        s.getTracks().forEach(t => t.stop());
+                    };
+                }).catch(() => alert("Mic Access Denied"));
+            } else mediaRec.stop();
+        };
 
         // --- CHAT LOGIC ---
         function loadInbox(){
@@ -361,11 +348,19 @@
                             var d = document.createElement('div'); d.className = "flex items-center gap-4 p-4 bg-slate-800 rounded-2xl mb-2 cursor-pointer border border-white/5";
                             d.onclick = () => openChat(f);
                             d.innerHTML = `<div class='w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center font-bold'>${f.name[0]}</div>
-                                           <div class='flex-1'><div class='flex justify-between font-bold text-sm text-white'><span>${f.name}</span><span class='text-slate-500 text-[10px]'>${lastT}</span></div>
+                                           <div class='flex-1'><div class='flex justify-between font-bold text-sm text-white text-left'><span>${f.name}</span><span class='text-slate-500 text-[10px]'>${lastT}</span></div>
                                            <div class='flex justify-between mt-1 text-left'><span class='text-[10px] text-slate-400 italic'>Mustafai Link</span>${unread>0?`<span class='unread-badge'>${unread}</span>`:''}</div></div>`;
                             cont.prepend(d);
                         });
                     });
+                });
+            });
+            db.ref('requests/'+me.uid).on('value', s => {
+                var cont = document.getElementById('requests-container'); cont.innerHTML = "";
+                s.forEach(c => {
+                    var r = c.val(); var d = document.createElement('div'); d.className = "flex items-center justify-between p-4 bg-slate-800 rounded-2xl mb-2 border border-white/5";
+                    d.innerHTML = `<div><p class='font-bold text-white text-sm'>${r.name}</p></div><button onclick="acceptFriend('${r.uid}')" class="bg-indigo-600 px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Accept</button>`;
+                    cont.appendChild(d);
                 });
             });
         }
@@ -402,8 +397,9 @@
         };
 
         function assembleChunks(msgId, total, type, targetId) {
-            db.ref('chunks/'+msgId).once('value', snap => {
-                var chunks = snap.val(); var fullData = "";
+            db.ref('chunks/'+msgId).on('value', snap => {
+                var chunks = snap.val(); if(!chunks) return;
+                var fullData = "";
                 for(var i=0; i<total; i++) { if(chunks[i]) fullData += chunks[i]; }
                 var el = document.getElementById(targetId);
                 if(type === 'img') el.innerHTML = `<img src="${fullData}">`;
@@ -427,7 +423,7 @@
         window.closeChat = () => document.getElementById('chat-window').classList.add('hidden');
         window.openSearch = () => document.getElementById('search-modal').classList.remove('hidden');
         window.closeSearch = () => document.getElementById('search-modal').classList.add('hidden');
-        window.findUser = () => { var u = document.getElementById('search-username-input').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
+        window.findUser = () => { var u = document.getElementById('search-username-input').value.toLowerCase().trim(); db.ref('usernames/'+u).once('value', s => { if(s.exists()){ window.lastUID = s.val(); document.getElementById('res-username-display').innerText = '@'+u; document.getElementById('search-result-box').classList.remove('hidden'); } else alert("No user"); }); };
         window.sendFriendRequest = () => { db.ref('requests/'+window.lastUID+'/'+auth.currentUser.uid).set({uid:auth.currentUser.uid, name:me.name, username:me.username}); alert("Sent!"); closeSearch(); };
         window.acceptFriend = (uid) => { db.ref('friends/'+auth.currentUser.uid+'/'+uid).set(true); db.ref('friends/'+uid+'/'+auth.currentUser.uid).set(true); db.ref('requests/'+auth.currentUser.uid+'/'+uid).remove(); };
         window.downloadMediaFromId = (id) => { var src = document.getElementById(id).querySelector('img, video, audio').src; var a=document.createElement("a"); a.href=src; a.download="file"; a.click(); };
