@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mustafai Chatting App | Final Pro Max</title>
+    <title>Mustafai Chatting App | Final Pro Max v9</title>
     
     <!-- Professional Tools -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,56 +14,53 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        body { font-family: sans-serif; background-color: #0b0e14; color: #f1f5f9; overflow: hidden; margin: 0; width: 100vw; height: 100vh; }
+        body { font-family: sans-serif; background-color: #0f172a; color: #f1f5f9; overflow: hidden; margin: 0; width: 100vw; height: 100vh; }
         .hidden { display: none !important; }
-        
-        /* Layout Framework based on Screenshot */
-        .app-shell { display: flex; flex-direction: column; height: 100vh; width: 100%; position: relative; background: #0b0e14; }
+        .app-shell { display: flex; flex-direction: column; height: 100vh; width: 100%; position: relative; background: #0f172a; }
         .main-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; width: 100%; }
 
-        /* Header Styling */
-        header { background: #161b22; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 20px; }
-        .header-title { font-size: 24px; font-weight: 800; color: white; letter-spacing: -0.5px; text-transform: uppercase; }
-        .header-sub { font-size: 10px; font-weight: bold; color: #6366f1; text-transform: uppercase; letter-spacing: 1px; }
-
         /* Navigation - White Icons */
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #161b22; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
-        .nav-btn { color: #ffffff !important; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.5; transition: 0.3s; background: none; border: none; outline: none; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #1e293b; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
+        .nav-btn { color: #ffffff !important; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.6; transition: 0.3s; background: none; border: none; outline: none; }
         .nav-active { opacity: 1 !important; color: #6366f1 !important; border-top: 2px solid #6366f1; padding-top: 5px; }
-        .nav-btn span { font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .nav-btn span { font-size: 10px; font-weight: bold; text-transform: uppercase; color: white; }
 
-        /* Chat Items - Card Style */
-        .chat-item { width: 100%; background: #1c2128; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.03); }
-        .chat-item:active { background: #2d333b; }
+        /* Chat & Status Items */
+        .chat-item { width: 100%; background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; cursor: pointer; position: relative; }
+        .status-ring { padding: 2px; border: 2px solid #6366f1; border-radius: 50%; }
 
         /* Bubbles */
-        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative; }
-        .msg-received { background: #2d333b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 12px; position: relative; }
+        .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
+        .msg-received { background: #1e293b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 10px; position: relative; }
         
         video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
-        audio { width: 200px; height: 40px; margin-top: 5px; }
+        audio { width: 200px; height: 35px; margin-top: 5px; }
         
-        .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: bold; }
-        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; display: flex; align-items: center; gap: 6px; width: fit-content; }
+        .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: bold; }
+        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 6px; width: fit-content; }
         
         #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s; }
-        .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; }
+        .msg-menu, .status-menu { position: absolute; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .show-menu { display: block !important; }
         .reaction-badge { position: absolute; bottom: -12px; right: 10px; background: #334155; border-radius: 12px; padding: 1px 6px; font-size: 12px; }
 
-        .credits { position: fixed; bottom: 80px; right: 15px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
-        
-        /* Status Viewer */
-        #status-viewer { position: fixed; inset: 0; background: black; z-index: 6000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        #status-media-box { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        #status-media-box img, #status-media-box video { max-width: 100%; max-height: 100%; }
-        .status-ring { padding: 2px; border: 2px solid #6366f1; border-radius: 50%; }
+        .credits { position: fixed; bottom: 80px; right: 10px; font-size: 10px; font-weight: bold; color: #6366f1; z-index: 999; pointer-events: none; }
+        .ring-anim { animation: ring-pulse 1.5s infinite; }
+        @keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
 
-        /* Call UI */
         .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; background: #000; }
-        .call-video-self { width: 100px; height: 150px; position: absolute; top: 20px; right: 20px; border: 2px solid white; z-index: 100; border-radius: 12px; background: #1e293b; }
-        .rec-active { color: #ef4444 !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .call-video-self { width: 95px; height: 135px; position: absolute; top: 15px; right: 15px; border: 2px solid white; z-index: 100; border-radius: 12px; background: #1e293b; }
+
+        /* Status Viewer Overlay */
+        #status-viewer { position: fixed; inset: 0; background: black; z-index: 6000; display: none; flex-direction: column; }
+        #status-progress-container { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 4px; z-index: 6010; }
+        .status-bar-bg { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 10px; overflow: hidden; }
+        .status-bar-fill { height: 100%; background: white; width: 0%; }
+        #status-content { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
+        #status-content img, #status-content video { max-width: 100%; max-height: 100%; }
+        .status-nav { position: absolute; top: 0; bottom: 0; width: 30%; z-index: 6005; }
+        .status-nav-left { left: 0; }
+        .status-nav-right { right: 0; }
     </style>
 </head>
 <body>
@@ -81,7 +78,8 @@
 
     <!-- STATUS VIEWER -->
     <div id="status-viewer">
-        <header class="absolute top-0 left-0 right-0 p-6 flex items-center gap-4 z-10 bg-gradient-to-b from-black/80 to-transparent">
+        <div id="status-progress-container"></div>
+        <header class="absolute top-12 left-0 right-0 p-4 flex items-center gap-4 z-[6020] bg-gradient-to-b from-black/60 to-transparent">
             <button onclick="closeStatus()" class="text-white"><i data-lucide="arrow-left"></i></button>
             <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center font-bold text-white" id="st-avatar">?</div>
             <div class="flex-1">
@@ -89,8 +87,13 @@
                 <p class="text-[10px] text-slate-300" id="st-time">Just now</p>
             </div>
         </header>
-        <div id="status-media-box"></div>
-        <div class="absolute bottom-10 left-0 right-0 p-6 text-center">
+        
+        <div id="status-content">
+            <div class="status-nav status-nav-left" onclick="prevStatus()"></div>
+            <div class="status-nav status-nav-right" onclick="nextStatus()"></div>
+        </div>
+
+        <div class="absolute bottom-10 left-0 right-0 p-6 text-center z-[6020]">
             <p class="text-white text-sm mb-4" id="st-caption"></p>
             <div id="st-views-area" class="hidden">
                 <button onclick="showViewers()" class="flex items-center gap-2 mx-auto bg-white/20 px-4 py-2 rounded-full text-white">
@@ -103,7 +106,7 @@
     <!-- CALL OVERLAY -->
     <div id="call-screen" class="fixed inset-0 z-[5000] bg-slate-950 hidden flex flex-col items-center justify-center p-6 text-center">
         <div id="ringing-ui">
-            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ring-pulse" id="call-avatar-ui">?</div>
+            <div class="w-32 h-32 bg-indigo-600 rounded-full mx-auto mb-8 flex items-center justify-center text-4xl font-bold ring-anim" id="call-avatar-ui">?</div>
             <h2 class="text-3xl font-bold mb-2 text-white" id="call-user-name">User</h2>
             <p class="text-indigo-400 animate-pulse mb-12" id="call-status-label">Incoming Call...</p>
             <div class="flex gap-10 justify-center">
@@ -119,8 +122,8 @@
     </div>
 
     <!-- AUTH SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-[2000] bg-slate-900 flex items-center justify-center p-6">
-        <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700 text-center">
+    <div id="auth-screen" class="fixed inset-0 z-[2000] bg-slate-900 flex items-center justify-center p-6 text-center">
+        <div class="w-full max-w-md bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700">
             <h1 class="text-4xl font-black text-indigo-500 italic mb-2 uppercase">MUSTAFAI</h1>
             <p class="text-slate-400 text-xs mb-10 font-bold uppercase tracking-widest text-center">Professional Suite</p>
             <div id="login-form" class="space-y-4 text-left">
@@ -145,16 +148,16 @@
 
     <!-- APP SHELL -->
     <div id="app-screen" class="hidden app-shell">
-        <header class="p-5 flex justify-between items-center">
+        <header class="p-5 flex justify-between items-center bg-slate-800 border-b border-white/5">
             <div>
-                <h2 id="view-title" class="header-title">HOME</h2>
-                <p class="header-sub">SECURE NETWORK</p>
+                <h2 id="view-title" class="text-xl font-bold text-white uppercase tracking-tighter text-left">Home</h2>
+                <div class="flex items-center gap-1 text-left"><div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div><span class="text-[9px] font-bold text-indigo-400">SECURE NETWORK</span></div>
             </div>
-            <button onclick="openSearch()" class="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg"><i data-lucide="plus"></i></button>
+            <button onclick="openSearch()" class="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center text-white"><i data-lucide="plus"></i></button>
         </header>
 
         <main class="main-content">
-            <div id="view-home" class="tab-view w-full"><div id="chats-container"></div></div>
+            <div id="view-home" class="tab-view w-full"><div id="chats-container" class="space-y-1"></div></div>
             
             <!-- Status Tab -->
             <div id="view-status" class="tab-view hidden w-full">
@@ -162,7 +165,7 @@
                     <div class="relative">
                         <div class="w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold text-white">+</div>
                     </div>
-                    <div>
+                    <div class="flex-1">
                         <p class="font-bold text-white">My Status</p>
                         <p class="text-xs text-slate-400">Tap to add status update</p>
                     </div>
@@ -179,14 +182,7 @@
                 <div id="p-display-box">
                     <h2 id="p-name" class="text-2xl font-bold text-white mb-1">Name</h2>
                     <p id="p-username" class="text-indigo-400 mb-10 font-bold font-sm">@user</p>
-                    <button onclick="toggleEditMode(true)" class="w-full max-w-sm p-4 bg-slate-800 rounded-2xl border border-slate-700 font-bold mb-4">Edit Profile Name</button>
-                </div>
-                <div id="p-edit-box" class="hidden space-y-4 max-w-sm mx-auto bg-slate-800 p-6 rounded-3xl border border-slate-700">
-                    <input type="text" id="edit-name-val" class="w-full p-4 bg-slate-700 rounded-xl outline-none border border-slate-600 text-white" placeholder="New Name">
-                    <div class="flex gap-2">
-                        <button onclick="saveNameUpdate()" class="flex-1 bg-indigo-600 py-3 rounded-xl font-bold text-sm">Save</button>
-                        <button onclick="toggleEditMode(false)" class="flex-1 bg-slate-700 py-3 rounded-xl font-bold text-sm text-slate-400">Cancel</button>
-                    </div>
+                    <button onclick="toggleEditProfile()" class="w-full max-w-sm p-4 bg-slate-800 rounded-2xl border border-slate-700 font-bold mb-4">Edit Profile</button>
                 </div>
                 <button onclick="logout()" class="w-full max-w-sm p-4 bg-red-900/10 text-red-500 rounded-2xl font-bold mt-10 border border-red-900/20">Sign Out</button>
             </div>
@@ -224,14 +220,15 @@
     </div>
 
     <!-- SEARCH MODAL -->
-    <div id="search-modal" class="fixed inset-0 z-[1100] bg-black/95 hidden flex items-center justify-center p-6">
+    <div id="search-modal" class="fixed inset-0 z-[1100] bg-black/95 hidden flex items-center justify-center p-6 text-center">
         <div class="w-full max-w-xs glass-ui p-8 rounded-3xl space-y-4">
-            <h3 class="font-bold text-white text-center">Find Connection</h3>
-            <input type="text" id="search-username-input" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
+            <h3 class="font-bold text-white text-xl">Find Connection</h3>
+            <!-- FIXED ID HERE -->
+            <input type="text" id="search-username-input" onkeydown="if(event.key==='Enter') findUser()" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
             <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center border border-indigo-500/20">
                 <span id="res-username" class="text-white font-bold text-sm">@user</span>
-                <button onclick="sendFriendRequest()" class="bg-indigo-500 px-4 py-1 rounded text-xs font-bold shadow-lg">Add</button>
+                <button onclick="sendReq()" class="bg-indigo-500 px-4 py-1 rounded text-xs font-bold shadow-lg">Add</button>
             </div>
             <button onclick="closeSearch()" class="w-full text-slate-500 text-xs font-bold uppercase mt-4 tracking-widest">Cancel</button>
         </div>
@@ -254,6 +251,7 @@
 
         var me, selectedFriend, myPeer, myStream, activeCall, mediaRec, audioChks = [];
         var callAnsTime = null;
+        var currentStatusList = [], currentStatusIdx = 0, statusTimer;
 
         // --- AUTH ---
         window.toggleAuth = (s) => { document.getElementById('login-form').classList.toggle('hidden', s); document.getElementById('signup-form').classList.toggle('hidden', !s); };
@@ -294,8 +292,7 @@
         });
 
         // --- PROFILE EDIT ---
-        window.toggleEditMode = (e) => { document.getElementById('p-display-box').classList.toggle('hidden', e); document.getElementById('p-edit-box').classList.toggle('hidden', !e); if(e) document.getElementById('edit-name-val').value = me.name; };
-        window.saveNameUpdate = () => { var n = document.getElementById('edit-name-val').value; if(n) db.ref('users/'+me.uid).update({name:n}).then(()=>toggleEditMode(false)); };
+        window.toggleEditProfile = () => { var n=prompt("Enter New Name:", me.name); if(n) db.ref('users/'+me.uid).update({name:n}); };
 
         // --- STATUS SYSTEM ---
         window.triggerStatus = () => document.getElementById('status-input').click();
@@ -306,11 +303,16 @@
             reader.onload = function(e) {
                 var data = e.target.result;
                 var type = file.type.startsWith('image/') ? 'img' : 'vid';
+                var statusID = db.ref('statuses/' + me.uid).push().key;
                 var chunkSize = 100000;
                 var totalChunks = Math.ceil(data.length / chunkSize);
-                db.ref('statuses/' + me.uid).set({ uid: me.uid, name: me.name, type: type, caption: caption || '', time: Date.now(), totalChunks: totalChunks });
+
+                db.ref('statuses/' + me.uid + '/' + statusID).set({
+                    id: statusID, type: type, caption: caption || '', time: Date.now(), totalChunks: totalChunks
+                });
+
                 for (var i = 0; i < totalChunks; i++) {
-                    db.ref('status_chunks/' + me.uid + '/' + i).set(data.substring(i * chunkSize, (i + 1) * chunkSize));
+                    db.ref('status_chunks/' + statusID + '/' + i).set(data.substring(i * chunkSize, (i + 1) * chunkSize));
                 }
                 alert("Status Uploaded!");
             };
@@ -321,50 +323,131 @@
             db.ref('statuses').on('value', snap => {
                 var cont = document.getElementById('status-list-container'); cont.innerHTML = "";
                 var now = Date.now();
-                snap.forEach(c => {
-                    var s = c.val();
-                    if(now - s.time < 86400000) {
-                        var d = document.createElement('div'); d.className = "chat-item";
-                        d.onclick = () => openStatus(s);
-                        d.innerHTML = `<div class="status-ring"><div class="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center font-bold">${s.name[0]}</div></div>
-                                       <div><p class="font-bold text-white">${s.name}</p><p class="text-[10px] text-slate-400">${formatTime(s.time)}</p></div>`;
-                        cont.appendChild(d);
+                snap.forEach(userSnap => {
+                    var uid = userSnap.key;
+                    var userStatuses = [];
+                    userSnap.forEach(sSnap => {
+                        var s = sSnap.val();
+                        if(now - s.time < 86400000) userStatuses.push(s);
+                    });
+
+                    if(userStatuses.length > 0) {
+                        db.ref('users/' + uid).once('value', uSnap => {
+                            var u = uSnap.val();
+                            var d = document.createElement('div');
+                            d.className = "chat-item";
+                            d.onclick = () => startStatusSequence(u, userStatuses);
+                            
+                            var menuHtml = "";
+                            if(uid === me.uid) {
+                                menuHtml = `<button onclick="event.stopPropagation(); toggleStatusMenu('${uid}')" class="absolute right-4 text-slate-400"><i data-lucide="more-vertical"></i></button>
+                                            <div id="st-menu-${uid}" class="status-menu">
+                                                <button onclick="event.stopPropagation(); deleteStatus('${userStatuses[0].id}')" class="text-red-400 flex items-center gap-2"><i data-lucide="trash-2" class="w-3 h-3"></i> Delete</button>
+                                                <button onclick="event.stopPropagation(); editStatus('${userStatuses[0].id}')" class="text-white flex items-center gap-2"><i data-lucide="edit-2" class="w-3 h-3"></i> Edit</button>
+                                            </div>`;
+                            }
+
+                            d.innerHTML = `<div class="status-ring"><div class="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center font-bold">${u.name[0]}</div></div>
+                                           <div class="flex-1"><p class="font-bold text-white">${u.name}</p><p class="text-[10px] text-slate-400">${userStatuses.length} updates</p></div>
+                                           ${menuHtml}`;
+                            cont.appendChild(d);
+                            lucide.createIcons();
+                        });
                     }
                 });
             });
         }
 
-        window.openStatus = (s) => {
+        window.toggleStatusMenu = (id) => document.getElementById('st-menu-'+id).classList.toggle('show-menu');
+        window.deleteStatus = (sid) => { if(confirm("Delete status?")) { db.ref('statuses/'+me.uid).remove(); db.ref('status_chunks/'+sid).remove(); } };
+        window.editStatus = (sid) => { var n = prompt("Edit Caption:"); if(n) db.ref('statuses/'+me.uid+'/'+sid).update({caption: n}); };
+
+        function startStatusSequence(user, statuses) {
+            currentStatusList = statuses.sort((a,b) => a.time - b.time);
+            currentStatusIdx = 0;
+            showStatus(user);
+        }
+
+        function showStatus(user) {
+            var s = currentStatusList[currentStatusIdx];
             document.getElementById('status-viewer').style.display = 'flex';
-            document.getElementById('st-name').innerText = s.name;
-            document.getElementById('st-avatar').innerText = s.name[0];
+            document.getElementById('st-name').innerText = user.name;
+            document.getElementById('st-avatar').innerText = user.name[0];
             document.getElementById('st-caption').innerText = s.caption;
             document.getElementById('st-time').innerText = formatTime(s.time);
-            db.ref('status_chunks/' + s.uid).once('value', snap => {
-                var chunks = snap.val(); var full = "";
-                for(var i=0; i<s.totalChunks; i++) { full += chunks[i]; }
-                var box = document.getElementById('status-media-box');
-                box.innerHTML = s.type === 'img' ? `<img src="${full}">` : `<video src="${full}" controls></video>`;
+            
+            var progCont = document.getElementById('status-progress-container');
+            progCont.innerHTML = "";
+            currentStatusList.forEach((_, i) => {
+                var bg = document.createElement('div'); bg.className = "status-bar-bg";
+                var fill = document.createElement('div'); fill.className = "status-bar-fill";
+                fill.id = "bar-" + i;
+                if(i < currentStatusIdx) fill.style.width = "100%";
+                bg.appendChild(fill);
+                progCont.appendChild(bg);
             });
-            if(s.uid !== me.uid) db.ref('status_views/' + s.uid + '/' + me.uid).set(me.name);
-            if(s.uid === me.uid) {
+
+            db.ref('status_chunks/' + s.id).once('value', snap => {
+                var chunks = snap.val(); var full = "";
+                for(var i=0; i<s.totalChunks; i++) { if(chunks[i]) full += chunks[i]; }
+                var box = document.getElementById('status-media-box');
+                if(s.type === 'img') {
+                    box.innerHTML = `<img src="${full}">`;
+                    startTimer(5000);
+                } else {
+                    box.innerHTML = `<video id="st-video" src="${full}" playsinline></video>`;
+                    var v = document.getElementById('st-video');
+                    v.onloadedmetadata = () => { v.play(); startTimer(v.duration * 1000); };
+                    v.onended = () => nextStatus();
+                }
+            });
+
+            if(user.uid !== me.uid) db.ref('status_views/' + s.id + '/' + me.uid).set(me.name);
+            else {
                 document.getElementById('st-views-area').classList.remove('hidden');
-                db.ref('status_views/' + me.uid).on('value', vSnap => { document.getElementById('st-view-count').innerText = vSnap.numChildren() || 0; });
+                db.ref('status_views/' + s.id).on('value', vSnap => { document.getElementById('st-view-count').innerText = vSnap.numChildren() || 0; });
+            }
+        }
+
+        function startTimer(duration) {
+            clearInterval(statusTimer);
+            var start = Date.now();
+            var bar = document.getElementById('bar-' + currentStatusIdx);
+            statusTimer = setInterval(() => {
+                var elapsed = Date.now() - start;
+                var progress = (elapsed / duration) * 100;
+                bar.style.width = progress + "%";
+                if(progress >= 100) { clearInterval(statusTimer); nextStatus(); }
+            }, 30);
+        }
+
+        window.nextStatus = () => {
+            clearInterval(statusTimer);
+            if(currentStatusIdx < currentStatusList.length - 1) {
+                currentStatusIdx++;
+                showStatus({name: document.getElementById('st-name').innerText, uid: currentStatusList[0].uid});
+            } else closeStatus();
+        };
+
+        window.prevStatus = () => {
+            clearInterval(statusTimer);
+            if(currentStatusIdx > 0) {
+                currentStatusIdx--;
+                showStatus({name: document.getElementById('st-name').innerText, uid: currentStatusList[0].uid});
             }
         };
-        window.closeStatus = () => { document.getElementById('status-viewer').style.display = 'none'; document.getElementById('status-media-box').innerHTML = ""; };
+
+        window.closeStatus = () => { clearInterval(statusTimer); document.getElementById('status-viewer').style.display = 'none'; document.getElementById('status-media-box').innerHTML = ""; };
         window.showViewers = () => {
-            db.ref('status_views/' + me.uid).once('value', snap => {
+            var s = currentStatusList[currentStatusIdx];
+            db.ref('status_views/' + s.id).once('value', snap => {
                 var names = []; snap.forEach(c => names.push(c.val()));
                 alert("Viewed by: " + (names.join(", ") || "No one yet"));
             });
         };
 
-        // --- CALLS WORKING FIXED ---
-        function initPeer(id) { 
-            myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'stun:stun1.l.google.com:19302' }] } }); 
-            myPeer.on('call', (c) => { activeCall = c; }); 
-        }
+        // --- CALLS ---
+        function initPeer(id) { myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] } }); myPeer.on('call', (c) => { activeCall = c; }); }
         function listenSignals() {
             db.ref('calls/'+auth.currentUser.uid).on('value', snap => {
                 var d = snap.val();
@@ -373,44 +456,37 @@
                         document.getElementById('call-screen').classList.remove('hidden');
                         document.getElementById('call-user-name').innerText = u.val().name;
                         document.getElementById('accept-btn').classList.remove('hidden');
-                        window.incomingCallType = d.type;
                     });
                 } else if(!d) document.getElementById('call-screen').classList.add('hidden');
             });
         }
         window.handleAcceptCall = () => {
-            var constraints = { audio: true, video: window.incomingCallType === 'video' };
-            navigator.mediaDevices.getUserMedia(constraints).then(s => {
+            navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(s => {
                 myStream = s; activeCall.answer(s); callAnsTime = Date.now();
                 db.ref('calls/'+auth.currentUser.uid).update({status:'connected'});
-                setupCallView(s, window.incomingCallType);
-            });
-        };
-        window.startCallPro = (type) => {
-            document.getElementById('call-screen').classList.remove('hidden');
-            document.getElementById('call-user-name').innerText = selectedFriend.name;
-            db.ref('calls/'+selectedFriend.uid).set({ from:me.uid, type:type, status:'ringing', time:Date.now() });
-            var constraints = { audio: true, video: type === 'video' };
-            navigator.mediaDevices.getUserMedia(constraints).then(s => {
-                myStream = s; activeCall = myPeer.call(selectedFriend.uid, s);
-                setupCallView(s, type);
-            }).catch(e => alert("Mic/Camera Blocked"));
-        };
-        function setupCallView(s, type) {
-            document.getElementById('ringing-ui').classList.add('hidden');
-            document.getElementById('video-ui').classList.remove('hidden');
-            if(type === 'video') {
+                document.getElementById('ringing-ui').classList.add('hidden');
+                document.getElementById('video-ui').classList.remove('hidden');
                 document.getElementById('local-video').srcObject = s;
                 activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; if(!callAnsTime) callAnsTime = Date.now(); });
-            } else {
-                activeCall.on('stream', rs => { if(!callAnsTime) callAnsTime = Date.now(); });
-            }
+            });
+        };
+        window.startCallPro = (t) => {
+            document.getElementById('call-screen').classList.remove('hidden');
+            document.getElementById('call-user-name').innerText = selectedFriend.name;
+            db.ref('calls/'+selectedFriend.uid).set({ from:me.uid, type:t, status:'ringing', time:Date.now() });
+            navigator.mediaDevices.getUserMedia({video: t==='video', audio:true}).then(s => {
+                myStream = s; activeCall = myPeer.call(selectedFriend.uid, s);
+                document.getElementById('ringing-ui').classList.add('hidden');
+                document.getElementById('video-ui').classList.remove('hidden');
+                document.getElementById('local-video').srcObject = s;
+                activeCall.on('stream', rs => { document.getElementById('remote-video').srcObject = rs; if(!callAnsTime) callAnsTime = Date.now(); });
+            });
         }
         window.handleEndCall = () => { if(callAnsTime) logCall('completed', Math.round((Date.now()-callAnsTime)/60000)); if(activeCall) activeCall.close(); if(myStream) myStream.getTracks().forEach(t => t.stop()); db.ref('calls/'+me.uid).remove(); location.reload(); };
         window.rejectCall = () => { logCall('missed'); db.ref('calls/'+me.uid).remove(); location.reload(); };
         function logCall(s, d, peer) { var pId = peer || selectedFriend.uid; var cid = me.uid < pId ? me.uid+pId : pId+me.uid; db.ref('messages/'+cid).push({ sender:me.uid, text: s==='completed' ? "Baat: "+d+" mins" : "Missed call", type:'call_log', time:Date.now(), read:false }); }
 
-        // --- UNLIMITED MEDIA CHUNKING ---
+        // --- MEDIA CHUNKING ---
         window.processUnlimitedMedia = (file) => {
             if(!file) return;
             var reader = new FileReader();
