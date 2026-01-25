@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mustafai Chatting App | Pro Max</title>
+    <title>Mustafai Chatting App | Final Pro Max</title>
     
     <!-- Professional Tools -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,13 +23,13 @@
 
         /* Header Styling */
         header { background: #161b22; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 20px; }
-        .header-title { font-size: 24px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+        .header-title { font-size: 24px; font-weight: 800; color: white; letter-spacing: -0.5px; text-transform: uppercase; }
         .header-sub { font-size: 10px; font-weight: bold; color: #6366f1; text-transform: uppercase; letter-spacing: 1px; }
 
         /* Navigation - White Icons */
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #161b22; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; }
         .nav-btn { color: #ffffff !important; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.5; transition: 0.3s; background: none; border: none; outline: none; }
-        .nav-active { opacity: 1 !important; color: #6366f1 !important; }
+        .nav-active { opacity: 1 !important; color: #6366f1 !important; border-top: 2px solid #6366f1; padding-top: 5px; }
         .nav-btn span { font-size: 10px; font-weight: bold; text-transform: uppercase; }
 
         /* Chat Items - Card Style */
@@ -40,11 +40,11 @@
         .msg-sent { background: #6366f1; color: white; border-radius: 18px 18px 4px 18px; margin-left: auto; width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); position: relative; }
         .msg-received { background: #2d333b; color: white; border-radius: 18px 18px 18px 4px; border: 1px solid rgba(255,255,255,0.05); width: fit-content; max-width: 80%; margin-bottom: 8px; padding: 12px; position: relative; }
         
-        video, img { max-width: 240px; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
-        audio { width: 210px; height: 40px; margin-top: 5px; }
+        video, img { max-width: 220px; border-radius: 12px; display: block; margin-top: 5px; background: #000; }
+        audio { width: 200px; height: 40px; margin-top: 5px; }
         
         .unread-badge { background: #6366f1; color: white; font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: bold; }
-        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; display: flex; align-items: center; gap: 6px; }
+        .call-log-pill { background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 10px; padding: 5px 15px; border-radius: 20px; align-self: center; margin: 10px 0; display: flex; align-items: center; gap: 6px; width: fit-content; }
         
         #reaction-bar { position: fixed; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px 15px; display: none; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: bounceIn 0.3s; }
         .msg-menu { position: absolute; bottom: -45px; right: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 5px; display: none; z-index: 100; min-width: 100px; }
@@ -62,6 +62,8 @@
         /* Call UI */
         .call-video-full { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; background: #000; }
         .call-video-self { width: 100px; height: 150px; position: absolute; top: 20px; right: 20px; border: 2px solid white; z-index: 100; border-radius: 12px; background: #1e293b; }
+        .rec-active { color: #ef4444 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -148,7 +150,7 @@
                 <h2 id="view-title" class="header-title">HOME</h2>
                 <p class="header-sub">SECURE NETWORK</p>
             </div>
-            <button onclick="openSearch()" class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg"><i data-lucide="plus"></i></button>
+            <button onclick="openSearch()" class="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg"><i data-lucide="plus"></i></button>
         </header>
 
         <main class="main-content">
@@ -170,7 +172,7 @@
                 <input type="file" id="status-input" class="hidden" accept="image/*,video/*" onchange="uploadStatus(this.files[0])">
             </div>
 
-            <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container"></div></div>
+            <div id="view-requests" class="tab-view hidden pt-4"><div id="requests-container" class="space-y-3"></div></div>
             
             <div id="view-profile" class="tab-view hidden text-center pt-8">
                 <div class="w-28 h-28 bg-indigo-600 rounded-3xl flex items-center justify-center text-4xl font-bold mx-auto mb-6 shadow-2xl rotate-3" id="p-avatar">?</div>
@@ -225,7 +227,7 @@
     <div id="search-modal" class="fixed inset-0 z-[1100] bg-black/95 hidden flex items-center justify-center p-6">
         <div class="w-full max-w-xs glass-ui p-8 rounded-3xl space-y-4">
             <h3 class="font-bold text-white text-center">Find Connection</h3>
-            <input type="text" id="search-input-val" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
+            <input type="text" id="search-username-input" placeholder="Username..." class="w-full p-4 bg-slate-700 rounded-xl outline-none text-white border border-slate-600">
             <button onclick="findUser()" class="w-full bg-indigo-600 py-3 rounded-xl font-bold">Search</button>
             <div id="search-result-box" class="hidden p-4 bg-slate-700 rounded-xl flex justify-between items-center border border-indigo-500/20">
                 <span id="res-username" class="text-white font-bold text-sm">@user</span>
@@ -358,8 +360,11 @@
             });
         };
 
-        // --- CALLS ---
-        function initPeer(id) { myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }] } }); myPeer.on('call', (c) => { activeCall = c; }); }
+        // --- CALLS WORKING FIXED ---
+        function initPeer(id) { 
+            myPeer = new Peer(id, { config: { 'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }, { 'urls': 'stun:stun1.l.google.com:19302' }] } }); 
+            myPeer.on('call', (c) => { activeCall = c; }); 
+        }
         function listenSignals() {
             db.ref('calls/'+auth.currentUser.uid).on('value', snap => {
                 var d = snap.val();
@@ -389,8 +394,8 @@
             navigator.mediaDevices.getUserMedia(constraints).then(s => {
                 myStream = s; activeCall = myPeer.call(selectedFriend.uid, s);
                 setupCallView(s, type);
-            });
-        }
+            }).catch(e => alert("Mic/Camera Blocked"));
+        };
         function setupCallView(s, type) {
             document.getElementById('ringing-ui').classList.add('hidden');
             document.getElementById('video-ui').classList.remove('hidden');
@@ -405,7 +410,7 @@
         window.rejectCall = () => { logCall('missed'); db.ref('calls/'+me.uid).remove(); location.reload(); };
         function logCall(s, d, peer) { var pId = peer || selectedFriend.uid; var cid = me.uid < pId ? me.uid+pId : pId+me.uid; db.ref('messages/'+cid).push({ sender:me.uid, text: s==='completed' ? "Baat: "+d+" mins" : "Missed call", type:'call_log', time:Date.now(), read:false }); }
 
-        // --- MEDIA CHUNKING ---
+        // --- UNLIMITED MEDIA CHUNKING ---
         window.processUnlimitedMedia = (file) => {
             if(!file) return;
             var reader = new FileReader();
@@ -429,15 +434,14 @@
         window.toggleVoice = () => {
             if (!mediaRec || mediaRec.state === "inactive") {
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
-                    var mType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4';
-                    mediaRec = new MediaRecorder(s, { mimeType: mType }); mediaRec.start(); audioChks = []; document.getElementById('mic-btn').classList.add('rec-active');
+                    mediaRec = new MediaRecorder(s); mediaRec.start(); audioChks = []; document.getElementById('mic-btn').classList.add('text-red-500');
                     mediaRec.ondataavailable = e => audioChks.push(e.data);
                     mediaRec.onstop = () => {
                         var r = new FileReader(); r.onload = e => {
                             var cid = auth.currentUser.uid < selectedFriend.uid ? auth.currentUser.uid+selectedFriend.uid : selectedFriend.uid+auth.currentUser.uid;
                             db.ref('messages/'+cid).push({sender:auth.currentUser.uid, type:'audio', data:e.target.result, time:Date.now(), read:false});
                         };
-                        r.readAsDataURL(new Blob(audioChks, {type: mType})); document.getElementById('mic-btn').classList.remove('rec-active'); s.getTracks().forEach(t => t.stop());
+                        r.readAsDataURL(new Blob(audioChks)); document.getElementById('mic-btn').classList.remove('text-red-500'); s.getTracks().forEach(t => t.stop());
                     };
                 });
             } else mediaRec.stop();
@@ -489,7 +493,7 @@
                         var d = document.createElement('div'); d.className = "flex "+(isMe?"justify-end":"justify-start");
                         var reactHtml = m.reaction ? `<div class="reaction-badge">${m.reaction}</div>` : '';
                         var contentId = "content-" + mid;
-                        var content = `<p id="${contentId}" class='text-sm text-left'>${m.text||'Loading...'}</p>`;
+                        var content = `<p id="${contentId}" class='text-sm text-left'>${m.text||'Loading media...'}</p>`;
                         if(m.isChunked) assembleChunks(mid, m.totalChunks, m.type, contentId);
                         else if(m.type==='audio') content = `<audio src='${m.data}' controls></audio>`;
                         d.innerHTML = `<div class='p-3 ${isMe?"msg-sent":"msg-received"}' ondblclick="showReact('${cid}','${mid}', event)">
